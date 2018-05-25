@@ -11,7 +11,7 @@ class Screen {
     //The object that actually draws on the canvas
     CanvasRenderingContext2D renderer;
     //The aspect ratio for the game
-    List<int> aspectRatio = [16, 9];
+    final aspectRatio = [16, 9];
     //The game that the screen will be drawing
     Game game;
 

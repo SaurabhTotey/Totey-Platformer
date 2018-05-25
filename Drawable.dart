@@ -52,4 +52,9 @@ class Drawable {
         sprite.src = spriteSrc;
     }
 
+    /**
+     * Gets the center of the drawable
+     */
+    List<double> center() => [this.x + this.w / 2, this.y + this.h / 2];
+
 }

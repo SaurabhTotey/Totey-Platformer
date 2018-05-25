@@ -1,4 +1,5 @@
 import 'Drawable.dart';
+import 'Game.dart';
 
 /**
  * A class that represents a game object
@@ -11,8 +12,8 @@ abstract class Entity extends Drawable {
     Entity(int x, int y, int w, int h, {String spriteSrc = "", Color bg = const Color(0, 0, 0, 0.0)}) : super(x, y, w, h, spriteSrc: spriteSrc, bg: bg);
 
     /**
-     * What the entity does every tick
+     * What the entity does every tick given the game
      */
-    void act();
+    void act(Game game);
 
 }
