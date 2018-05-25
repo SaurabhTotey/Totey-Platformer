@@ -1,4 +1,5 @@
 import 'dart:html';
+import 'Game.dart';
 
 /**
  * The class that handles the games graphics and drawing to the canvas
@@ -11,14 +12,16 @@ class Screen {
     CanvasRenderingContext2D renderer;
     //The aspect ratio for the game
     List<int> aspectRatio = [16, 9];
+    //The game that the screen will be drawing
+    Game game;
 
     /**
      * Constructor for a screen
      * Initializes the renderer and sets the scaling for the screen to match the window
      */
-    Screen() {
+    Screen(this.game) {
         this.screen = new CanvasElement();
-        this.renderer = this.screen.getContext('2d');
+        this.renderer = this.screen.context2D;
         //Adds the screen to the page
         querySelector("body").append(this.screen);
         //On window resize, makes sure the canvas size changes to max size will keeping aspect ratio
@@ -30,6 +33,7 @@ class Screen {
                 this.screen.height = window.innerHeight;
                 this.screen.width = window.innerHeight * aspectRatio[0] / aspectRatio[1];
             }
+            this.update();
         };
         resizeProc();
         window.onResize.listen(resizeProc);

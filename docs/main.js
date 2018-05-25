@@ -586,7 +586,7 @@
       toString$0: ["super$Interceptor$toString", function(receiver) {
         return H.Primitives_objectToHumanReadableString(receiver);
       }],
-      "%": "Blob|CanvasGradient|CanvasPattern|DOMError|File|FileError|MediaError|NavigatorUserMediaError|PositionError|SQLError|SVGAnimatedLength|SVGAnimatedLengthList|SVGAnimatedNumber|SVGAnimatedNumberList|SVGAnimatedString|Screen|WebGLRenderingContext"
+      "%": "Blob|CanvasGradient|CanvasPattern|CanvasRenderingContext2D|DOMError|File|FileError|MediaError|NavigatorUserMediaError|PositionError|SQLError|SVGAnimatedLength|SVGAnimatedLengthList|SVGAnimatedNumber|SVGAnimatedNumberList|SVGAnimatedString|Screen"
     },
     JSBool: {
       "^": "Interceptor;",
@@ -5946,7 +5946,7 @@
     },
     HtmlElement: {
       "^": "Element;",
-      "%": "HTMLBRElement|HTMLBaseElement|HTMLButtonElement|HTMLContentElement|HTMLDListElement|HTMLDataListElement|HTMLDetailsElement|HTMLDialogElement|HTMLDirectoryElement|HTMLDivElement|HTMLEmbedElement|HTMLFieldSetElement|HTMLFontElement|HTMLFrameElement|HTMLHRElement|HTMLHeadElement|HTMLHeadingElement|HTMLHtmlElement|HTMLIFrameElement|HTMLImageElement|HTMLKeygenElement|HTMLLIElement|HTMLLabelElement|HTMLLegendElement|HTMLLinkElement|HTMLMapElement|HTMLMarqueeElement|HTMLMenuElement|HTMLMenuItemElement|HTMLMetaElement|HTMLMeterElement|HTMLModElement|HTMLOListElement|HTMLObjectElement|HTMLOptGroupElement|HTMLOptionElement|HTMLOutputElement|HTMLParagraphElement|HTMLParamElement|HTMLPictureElement|HTMLPreElement|HTMLProgressElement|HTMLQuoteElement|HTMLScriptElement|HTMLShadowElement|HTMLSlotElement|HTMLSourceElement|HTMLSpanElement|HTMLStyleElement|HTMLTableCaptionElement|HTMLTableCellElement|HTMLTableColElement|HTMLTableDataCellElement|HTMLTableElement|HTMLTableHeaderCellElement|HTMLTableRowElement|HTMLTableSectionElement|HTMLTemplateElement|HTMLTextAreaElement|HTMLTitleElement|HTMLTrackElement|HTMLUListElement|HTMLUnknownElement;HTMLElement"
+      "%": "HTMLBRElement|HTMLBaseElement|HTMLButtonElement|HTMLCanvasElement|HTMLContentElement|HTMLDListElement|HTMLDataListElement|HTMLDetailsElement|HTMLDialogElement|HTMLDirectoryElement|HTMLDivElement|HTMLEmbedElement|HTMLFieldSetElement|HTMLFontElement|HTMLFrameElement|HTMLHRElement|HTMLHeadElement|HTMLHeadingElement|HTMLHtmlElement|HTMLIFrameElement|HTMLImageElement|HTMLKeygenElement|HTMLLIElement|HTMLLabelElement|HTMLLegendElement|HTMLLinkElement|HTMLMapElement|HTMLMarqueeElement|HTMLMenuElement|HTMLMenuItemElement|HTMLMetaElement|HTMLMeterElement|HTMLModElement|HTMLOListElement|HTMLObjectElement|HTMLOptGroupElement|HTMLOptionElement|HTMLOutputElement|HTMLParagraphElement|HTMLParamElement|HTMLPictureElement|HTMLPreElement|HTMLProgressElement|HTMLQuoteElement|HTMLScriptElement|HTMLShadowElement|HTMLSlotElement|HTMLSourceElement|HTMLSpanElement|HTMLStyleElement|HTMLTableCaptionElement|HTMLTableCellElement|HTMLTableColElement|HTMLTableDataCellElement|HTMLTableElement|HTMLTableHeaderCellElement|HTMLTableRowElement|HTMLTableSectionElement|HTMLTemplateElement|HTMLTextAreaElement|HTMLTitleElement|HTMLTrackElement|HTMLUListElement|HTMLUnknownElement;HTMLElement"
     },
     AnchorElement: {
       "^": "HtmlElement;",
@@ -5968,23 +5968,6 @@
       "^": "HtmlElement;",
       $isInterceptor: 1,
       "%": "HTMLBodyElement"
-    },
-    CanvasElement: {
-      "^": "HtmlElement;",
-      getContext$2: function(receiver, contextId, attributes) {
-        return receiver.getContext(contextId);
-      },
-      getContext$1: function($receiver, contextId) {
-        return this.getContext$2($receiver, contextId, null);
-      },
-      "%": "HTMLCanvasElement"
-    },
-    CanvasRenderingContext2D: {
-      "^": "Interceptor;fillStyle}",
-      fillRect$4: function(receiver, x, y, width, height) {
-        return receiver.fillRect(x, y, width, height);
-      },
-      "%": "CanvasRenderingContext2D"
     },
     CharacterData: {
       "^": "Node;length=",
@@ -6340,33 +6323,35 @@
   }], ["dart.dom.web_audio", "dart:web_audio",, P, {
     "^": ""
   }], ["dart.dom.web_gl", "dart:web_gl",, P, {
-    "^": "",
-    RenderingContext2: {
-      "^": "Interceptor;",
-      $isInterceptor: 1,
-      "%": "WebGL2RenderingContext"
-    }
+    "^": ""
   }], ["dart.dom.web_sql", "dart:web_sql",, P, {
     "^": ""
   }], ["", "../Screen.dart",, D, {
     "^": "",
     Screen: {
-      "^": "Object;screen,renderer,aspectRatio",
-      Screen$0: function() {
+      "^": "Object;screen,renderer,aspectRatio,game",
+      update$0: function() {
+        var t1, t2;
+        t1 = this.renderer;
+        t1.fillStyle = "lightblue";
+        t2 = this.screen;
+        t1.fillRect(0, 0, t2.width, t2.height);
+      },
+      Screen$1: function(game) {
         var t1, e;
         t1 = document;
         e = t1.createElement("canvas");
         this.screen = e;
-        this.renderer = C.CanvasElement_methods.getContext$1(e, "2d");
+        this.renderer = e.getContext("2d");
         t1.querySelector("body").appendChild(this.screen);
         t1 = new D.Screen_resizeProc(this);
         t1.call$0();
         W._EventStreamSubscription$(window, "resize", t1, false, W.Event);
       },
       static: {
-        Screen$: function() {
-          var t1 = new D.Screen(null, null, [16, 9]);
-          t1.Screen$0();
+        Screen$: function(game) {
+          var t1 = new D.Screen(null, null, [16, 9], game);
+          t1.Screen$1(game);
           return t1;
         }
       }
@@ -6374,7 +6359,7 @@
     Screen_resizeProc: {
       "^": "Closure:12;$this",
       call$1: function(resizeEvent) {
-        var t1, t2, t3, t4, t5;
+        var t1, t2, t3, t4, t5, t6;
         t1 = window.innerWidth;
         t2 = this.$this;
         t3 = t2.aspectRatio;
@@ -6385,20 +6370,21 @@
         t3 = t3[1];
         if (typeof t5 !== "number")
           return t5.$div();
-        t2 = t2.screen;
+        t6 = t2.screen;
         if (t1 / t4 < t5 / t3) {
-          t2.width = window.innerWidth;
+          t6.width = window.innerWidth;
           t1 = window.innerWidth;
           if (typeof t1 !== "number")
             return t1.$mul();
-          t2.height = t1 * t3 / t4;
+          t6.height = t1 * t3 / t4;
         } else {
-          t2.height = window.innerHeight;
+          t6.height = window.innerHeight;
           t1 = window.innerHeight;
           if (typeof t1 !== "number")
             return t1.$mul();
-          t2.width = t1 * t4 / t3;
+          t6.width = t1 * t4 / t3;
         }
+        t2.update$0();
       },
       call$0: function() {
         return this.call$1(null);
@@ -6407,12 +6393,7 @@
   }], ["", "../main.dart",, F, {
     "^": "",
     main: [function() {
-      var $screen, t1, t2;
-      $screen = D.Screen$();
-      J.set$fillStyle$x($screen.renderer, "lightblue");
-      t1 = $screen.renderer;
-      t2 = $screen.screen;
-      J.fillRect$4$x(t1, 0, 0, t2.width, t2.height);
+      D.Screen$(null).update$0();
     }, "call$0", "main__main$closure", 0, 0, 1]
   }, 1]];
   setupProgram(dart, 0);
@@ -6502,9 +6483,6 @@
       return receiver;
     return J.getNativeInterceptor(receiver);
   };
-  J.set$fillStyle$x = function(receiver, value) {
-    return J.getInterceptor$x(receiver).set$fillStyle(receiver, value);
-  };
   J.get$error$x = function(receiver) {
     return J.getInterceptor$x(receiver).get$error(receiver);
   };
@@ -6540,9 +6518,6 @@
   J.elementAt$1$ax = function(receiver, a0) {
     return J.getInterceptor$ax(receiver).elementAt$1(receiver, a0);
   };
-  J.fillRect$4$x = function(receiver, a0, a1, a2, a3) {
-    return J.getInterceptor$x(receiver).fillRect$4(receiver, a0, a1, a2, a3);
-  };
   J.map$1$ax = function(receiver, a0) {
     return J.getInterceptor$ax(receiver).map$1(receiver, a0);
   };
@@ -6561,7 +6536,6 @@
   };
   // Output contains no constant list.
   var $ = Isolate.$isolateProperties;
-  C.CanvasElement_methods = W.CanvasElement.prototype;
   C.Interceptor_methods = J.Interceptor.prototype;
   C.JSArray_methods = J.JSArray.prototype;
   C.JSInt_methods = J.JSInt.prototype;
