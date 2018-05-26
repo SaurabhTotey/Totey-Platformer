@@ -20,4 +20,9 @@ class Level {
     //The level's acceleration downward due to gravity
     double gravity;
 
+    /**
+     * Creates a level given all of the level fields
+     */
+    Level({this.width = 1600, this.height = 900, this.startingPosition, this.entities, this.drawables, this.gravity = 1.0});
+
 }

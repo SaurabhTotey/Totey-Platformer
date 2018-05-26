@@ -646,6 +646,16 @@
         if (!!receiver.fixed$length)
           throw H.wrapException(new P.UnsupportedError(reason));
       },
+      add$1: function(receiver, value) {
+        this.checkGrowable$1(receiver, "add");
+        receiver.push(value);
+      },
+      addAll$1: function(receiver, collection) {
+        var t1, _i;
+        this.checkGrowable$1(receiver, "addAll");
+        for (t1 = collection.length, _i = 0; _i < collection.length; collection.length === t1 || (0, H.throwConcurrentModificationError)(collection), ++_i)
+          receiver.push(collection[_i]);
+      },
       map$1: function(receiver, f) {
         return new H.MappedListIterable(receiver, f, [H.getTypeArgumentByIndex(receiver, 0), null]);
       },
@@ -666,19 +676,21 @@
         $length = end - start;
         if ($length === 0)
           return;
+        if (skipCount < 0)
+          H.throwExpression(P.RangeError$range(skipCount, 0, null, "skipCount", null));
         if (skipCount + $length > iterable.length)
           throw H.wrapException(H.IterableElementError_tooFew());
         if (skipCount < start)
           for (i = $length - 1; i >= 0; --i) {
             t1 = skipCount + i;
-            if (t1 >= iterable.length)
+            if (t1 < 0 || t1 >= iterable.length)
               return H.ioore(iterable, t1);
             receiver[start + i] = iterable[t1];
           }
         else
           for (i = 0; i < $length; ++i) {
             t1 = skipCount + i;
-            if (t1 >= iterable.length)
+            if (t1 < 0 || t1 >= iterable.length)
               return H.ioore(iterable, t1);
             receiver[start + i] = iterable[t1];
           }
@@ -5216,19 +5228,25 @@
         return J.$index$asx(bucket, index).get$_element();
       },
       add$1: function(_, element) {
-        var strings, nums;
+        var strings, table, nums;
         if (typeof element === "string" && element !== "__proto__") {
           strings = this._collection$_strings;
           if (strings == null) {
-            strings = P._LinkedHashSet__newHashTable();
-            this._collection$_strings = strings;
+            table = Object.create(null);
+            table["<non-identifier-key>"] = table;
+            delete table["<non-identifier-key>"];
+            this._collection$_strings = table;
+            strings = table;
           }
           return this._collection$_addHashTableEntry$2(strings, element);
         } else if (typeof element === "number" && (element & 0x3ffffff) === element) {
           nums = this._collection$_nums;
           if (nums == null) {
-            nums = P._LinkedHashSet__newHashTable();
-            this._collection$_nums = nums;
+            table = Object.create(null);
+            table["<non-identifier-key>"] = table;
+            delete table["<non-identifier-key>"];
+            this._collection$_nums = table;
+            nums = table;
           }
           return this._collection$_addHashTableEntry$2(nums, element);
         } else
@@ -5477,7 +5495,7 @@
         t1 = this._table;
         t2 = this._tail;
         t3 = t1.length;
-        if (t2 >= t3)
+        if (t2 < 0 || t2 >= t3)
           return H.ioore(t1, t2);
         t1[t2] = element;
         t3 = (t2 + 1 & t3 - 1) >>> 0;
@@ -5946,6 +5964,10 @@
     }
   }], ["dart.dom.html", "dart:html",, W, {
     "^": "",
+    ImageElement_ImageElement: function(height, src, width) {
+      var e = document.createElement("img");
+      return e;
+    },
     _wrapZone: function(callback) {
       var t1 = $.Zone__current;
       if (t1 === C.C__RootZone)
@@ -6160,97 +6182,113 @@
       "%": "SVGAnimateElement|SVGAnimateMotionElement|SVGAnimateTransformElement|SVGAnimationElement|SVGSetElement"
     },
     FEBlendElement: {
-      "^": "SvgElement;",
+      "^": "SvgElement;x=",
       $isInterceptor: 1,
       "%": "SVGFEBlendElement"
     },
     FEColorMatrixElement: {
-      "^": "SvgElement;",
+      "^": "SvgElement;x=",
       $isInterceptor: 1,
       "%": "SVGFEColorMatrixElement"
     },
     FEComponentTransferElement: {
-      "^": "SvgElement;",
+      "^": "SvgElement;x=",
       $isInterceptor: 1,
       "%": "SVGFEComponentTransferElement"
     },
     FECompositeElement: {
-      "^": "SvgElement;",
+      "^": "SvgElement;x=",
       $isInterceptor: 1,
       "%": "SVGFECompositeElement"
     },
     FEConvolveMatrixElement: {
-      "^": "SvgElement;",
+      "^": "SvgElement;x=",
       $isInterceptor: 1,
       "%": "SVGFEConvolveMatrixElement"
     },
     FEDiffuseLightingElement: {
-      "^": "SvgElement;",
+      "^": "SvgElement;x=",
       $isInterceptor: 1,
       "%": "SVGFEDiffuseLightingElement"
     },
     FEDisplacementMapElement: {
-      "^": "SvgElement;",
+      "^": "SvgElement;x=",
       $isInterceptor: 1,
       "%": "SVGFEDisplacementMapElement"
     },
     FEFloodElement: {
-      "^": "SvgElement;",
+      "^": "SvgElement;x=",
       $isInterceptor: 1,
       "%": "SVGFEFloodElement"
     },
     FEGaussianBlurElement: {
-      "^": "SvgElement;",
+      "^": "SvgElement;x=",
       $isInterceptor: 1,
       "%": "SVGFEGaussianBlurElement"
     },
     FEImageElement: {
-      "^": "SvgElement;",
+      "^": "SvgElement;x=",
       $isInterceptor: 1,
       "%": "SVGFEImageElement"
     },
     FEMergeElement: {
-      "^": "SvgElement;",
+      "^": "SvgElement;x=",
       $isInterceptor: 1,
       "%": "SVGFEMergeElement"
     },
     FEMorphologyElement: {
-      "^": "SvgElement;",
+      "^": "SvgElement;x=",
       $isInterceptor: 1,
       "%": "SVGFEMorphologyElement"
     },
     FEOffsetElement: {
-      "^": "SvgElement;",
+      "^": "SvgElement;x=",
       $isInterceptor: 1,
       "%": "SVGFEOffsetElement"
     },
+    FEPointLightElement: {
+      "^": "SvgElement;x=",
+      "%": "SVGFEPointLightElement"
+    },
     FESpecularLightingElement: {
-      "^": "SvgElement;",
+      "^": "SvgElement;x=",
       $isInterceptor: 1,
       "%": "SVGFESpecularLightingElement"
     },
+    FESpotLightElement: {
+      "^": "SvgElement;x=",
+      "%": "SVGFESpotLightElement"
+    },
     FETileElement: {
-      "^": "SvgElement;",
+      "^": "SvgElement;x=",
       $isInterceptor: 1,
       "%": "SVGFETileElement"
     },
     FETurbulenceElement: {
-      "^": "SvgElement;",
+      "^": "SvgElement;x=",
       $isInterceptor: 1,
       "%": "SVGFETurbulenceElement"
     },
     FilterElement: {
-      "^": "SvgElement;",
+      "^": "SvgElement;x=",
       $isInterceptor: 1,
       "%": "SVGFilterElement"
+    },
+    ForeignObjectElement: {
+      "^": "GraphicsElement;x=",
+      "%": "SVGForeignObjectElement"
+    },
+    GeometryElement: {
+      "^": "GraphicsElement;",
+      "%": "SVGCircleElement|SVGEllipseElement|SVGLineElement|SVGPathElement|SVGPolygonElement|SVGPolylineElement;SVGGeometryElement"
     },
     GraphicsElement: {
       "^": "SvgElement;",
       $isInterceptor: 1,
-      "%": "SVGCircleElement|SVGClipPathElement|SVGDefsElement|SVGEllipseElement|SVGForeignObjectElement|SVGGElement|SVGGeometryElement|SVGLineElement|SVGPathElement|SVGPolygonElement|SVGPolylineElement|SVGRectElement|SVGSwitchElement;SVGGraphicsElement"
+      "%": "SVGClipPathElement|SVGDefsElement|SVGGElement|SVGSwitchElement;SVGGraphicsElement"
     },
     ImageElement0: {
-      "^": "GraphicsElement;",
+      "^": "GraphicsElement;x=",
       $isInterceptor: 1,
       "%": "SVGImageElement"
     },
@@ -6260,14 +6298,18 @@
       "%": "SVGMarkerElement"
     },
     MaskElement: {
-      "^": "SvgElement;",
+      "^": "SvgElement;x=",
       $isInterceptor: 1,
       "%": "SVGMaskElement"
     },
     PatternElement: {
-      "^": "SvgElement;",
+      "^": "SvgElement;x=",
       $isInterceptor: 1,
       "%": "SVGPatternElement"
+    },
+    RectElement: {
+      "^": "GeometryElement;x=",
+      "%": "SVGRectElement"
     },
     ScriptElement0: {
       "^": "SvgElement;",
@@ -6277,10 +6319,10 @@
     SvgElement: {
       "^": "Element;",
       $isInterceptor: 1,
-      "%": "SVGComponentTransferFunctionElement|SVGDescElement|SVGDiscardElement|SVGFEDistantLightElement|SVGFEFuncAElement|SVGFEFuncBElement|SVGFEFuncGElement|SVGFEFuncRElement|SVGFEMergeNodeElement|SVGFEPointLightElement|SVGFESpotLightElement|SVGMetadataElement|SVGStopElement|SVGStyleElement|SVGTitleElement;SVGElement"
+      "%": "SVGComponentTransferFunctionElement|SVGDescElement|SVGDiscardElement|SVGFEDistantLightElement|SVGFEFuncAElement|SVGFEFuncBElement|SVGFEFuncGElement|SVGFEFuncRElement|SVGFEMergeNodeElement|SVGMetadataElement|SVGStopElement|SVGStyleElement|SVGTitleElement;SVGElement"
     },
     SvgSvgElement: {
-      "^": "GraphicsElement;",
+      "^": "GraphicsElement;x=",
       $isInterceptor: 1,
       "%": "SVGSVGElement"
     },
@@ -6291,15 +6333,19 @@
     },
     TextContentElement: {
       "^": "GraphicsElement;",
-      "%": "SVGTSpanElement|SVGTextElement|SVGTextPositioningElement;SVGTextContentElement"
+      "%": ";SVGTextContentElement"
     },
     TextPathElement: {
       "^": "TextContentElement;",
       $isInterceptor: 1,
       "%": "SVGTextPathElement"
     },
+    TextPositioningElement: {
+      "^": "TextContentElement;x=",
+      "%": "SVGTSpanElement|SVGTextElement|SVGTextPositioningElement"
+    },
     UseElement: {
-      "^": "GraphicsElement;",
+      "^": "GraphicsElement;x=",
       $isInterceptor: 1,
       "%": "SVGUseElement"
     },
@@ -6334,16 +6380,122 @@
     "^": ""
   }], ["dart.dom.web_sql", "dart:web_sql",, P, {
     "^": ""
+  }], ["", "../Drawable.dart",, B, {
+    "^": "",
+    Color: {
+      "^": "Object;r,g,b,a",
+      toString$0: function(_) {
+        return "rgba(" + this.r + "," + this.g + "," + this.b + "," + this.a + ")";
+      }
+    },
+    Drawable: {
+      "^": "Object;x>,y,w<,h,bg,sprite",
+      center$0: function() {
+        return [this.x + this.w / 2, this.y + this.h / 2];
+      }
+    }
+  }], ["", "../EndBlock.dart",, O, {
+    "^": "",
+    EndBlock: {
+      "^": "Entity;x,y,w,h,bg,sprite"
+    }
+  }], ["", "../Entity.dart",, O, {
+    "^": "",
+    Entity: {
+      "^": "Drawable;"
+    }
+  }], ["", "../Game.dart",, G, {
+    "^": "",
+    Game: {
+      "^": "Object;width,height,ticksPerSecond,isFinished,level,player,entities"
+    }
+  }], ["", "../Level.dart",, Q, {
+    "^": "",
+    Level: {
+      "^": "Object;width,height,startingPosition,entities,drawables,gravity"
+    }
+  }], ["", "../MovableEntity.dart",, R, {
+    "^": "",
+    MovableEntity: {
+      "^": "Entity;"
+    }
+  }], ["", "../Player.dart",, R, {
+    "^": "",
+    Player: {
+      "^": "MovableEntity;velocityX,velocityY,x,y,w,h,bg,sprite"
+    }
   }], ["", "../Screen.dart",, D, {
     "^": "",
     Screen: {
       "^": "Object;screen,renderer,aspectRatio,game",
       update$0: function() {
-        var t1, t2;
+        var t1, t2, logicalX, t3, logicalY, t4, t5, t6, stretchX, stretchY, drawables, _i, obj, t7, t8, t9;
         t1 = this.renderer;
-        t1.fillStyle = "lightblue";
+        t1.fillStyle = "black";
         t2 = this.screen;
         t1.fillRect(0, 0, t2.width, t2.height);
+        t2 = this.game;
+        t1 = t2.width;
+        logicalX = t2.player.center$0()[0] - t1 / 2;
+        t3 = t2.height;
+        logicalY = t2.player.center$0()[1] - t3 / 2;
+        if (logicalX < 0)
+          logicalX = 0;
+        t4 = t2.level;
+        t5 = t4.width;
+        if (logicalX + t1 > t5)
+          logicalX = t5 - t1;
+        if (logicalY < 0)
+          logicalY = 0;
+        t5 = t4.height;
+        if (logicalY + t3 > t5)
+          logicalY = t5 - t3;
+        t5 = this.screen;
+        t6 = t5.width;
+        if (typeof t6 !== "number")
+          return H.iae(t6);
+        stretchX = t1 / t6;
+        t5 = t5.height;
+        if (typeof t5 !== "number")
+          return H.iae(t5);
+        stretchY = t3 / t5;
+        drawables = P.List_List$from(t4.drawables, true, null);
+        C.JSArray_methods.addAll$1(drawables, t2.entities);
+        C.JSArray_methods.add$1(drawables, t2.player);
+        for (t2 = drawables.length, t1 = logicalX + t1, t3 = logicalY + t3, _i = 0; _i < drawables.length; drawables.length === t2 || (0, H.throwConcurrentModificationError)(drawables), ++_i) {
+          obj = drawables[_i];
+          t4 = J.get$x$x(obj);
+          t5 = obj.get$w();
+          if (typeof t4 !== "number")
+            return t4.$add();
+          if (!(t4 + t5 < logicalX)) {
+            t4 = obj.y;
+            t4 = t4 + obj.h < logicalY || obj.x > t1 || t4 > t3;
+          } else
+            t4 = true;
+          if (t4)
+            continue;
+          t4 = this.renderer;
+          t5 = obj.bg;
+          t4.fillStyle = "rgba(" + t5.r + "," + t5.g + "," + t5.b + "," + t5.a + ")";
+          t5 = this.renderer;
+          t4 = obj.x;
+          t6 = obj.y;
+          t7 = obj.w * stretchX;
+          t8 = obj.h * stretchY;
+          t5.fillRect((t4 - logicalX) * stretchX, (t6 - logicalY) * stretchY, t7, t8);
+          t4 = obj.sprite;
+          if (t4.src.length !== 0) {
+            t5 = this.renderer;
+            t6 = obj.x;
+            t9 = obj.y;
+            if (t7 < 0)
+              t7 = -t7 * 0;
+            if (t8 < 0)
+              t8 = -t8 * 0;
+            t5.drawImage(t4, (t6 - logicalX) * stretchX, (t9 - logicalY) * stretchY, t7, t8);
+          }
+        }
       },
       Screen$1: function(game) {
         var t1, e;
@@ -6398,10 +6550,37 @@
         return this.call$1(null);
       }
     }
+  }], ["", "../SolidPlatform.dart",, G, {
+    "^": "",
+    SolidPlatform: {
+      "^": "Entity;x,y,w,h,bg,sprite"
+    }
   }], ["", "../main.dart",, F, {
     "^": "",
     main: [function() {
-      D.Screen$(null).update$0();
+      var t1, t2, t3, t4, t5, crapTestLevel, crapTestGame;
+      t1 = [0, 0];
+      t2 = new G.SolidPlatform(0, 800, 800, 100, C.Color_0_255_0_1, null);
+      t3 = W.ImageElement_ImageElement(null, null, null);
+      t2.sprite = t3;
+      t3.src = "";
+      t3 = new O.EndBlock(900, 750, 50, 50, C.Color_255_255_255_1, null);
+      t4 = W.ImageElement_ImageElement(null, null, null);
+      t3.sprite = t4;
+      t4.src = "";
+      t4 = new B.Drawable(0, 0, 1600, 900, C.Color_135_206_250_1, null);
+      t5 = W.ImageElement_ImageElement(null, null, null);
+      t4.sprite = t5;
+      t5.src = "";
+      crapTestLevel = new Q.Level(1600, 900, t1, [t2, t3], [t4], 1);
+      crapTestGame = new G.Game(1600, 900, 30, false, crapTestLevel, null, null);
+      t1 = new R.Player(0, 0, t1[0], t1[1], 50, 100, C.Color_255_100_100_1, null);
+      t4 = W.ImageElement_ImageElement(null, null, null);
+      t1.sprite = t4;
+      t4.src = "";
+      crapTestGame.player = t1;
+      crapTestGame.entities = P.List_List$from(crapTestLevel.entities, true, null);
+      D.Screen$(crapTestGame).update$0();
     }, "call$0", "main__main$closure", 0, 0, 1]
   }, 1]];
   setupProgram(dart, 0);
@@ -6500,6 +6679,9 @@
   J.get$length$asx = function(receiver) {
     return J.getInterceptor$asx(receiver).get$length(receiver);
   };
+  J.get$x$x = function(receiver) {
+    return J.getInterceptor$x(receiver).get$x(receiver);
+  };
   J.$add$ns = function(receiver, a0) {
     if (typeof receiver == "number" && typeof a0 == "number")
       return receiver + a0;
@@ -6555,6 +6737,10 @@
   C.UnknownJavaScriptObject_methods = J.UnknownJavaScriptObject.prototype;
   C.C__DelayedDone = new P._DelayedDone();
   C.C__RootZone = new P._RootZone();
+  C.Color_0_255_0_1 = new B.Color(0, 255, 0, 1);
+  C.Color_135_206_250_1 = new B.Color(135, 206, 250, 1);
+  C.Color_255_100_100_1 = new B.Color(255, 100, 100, 1);
+  C.Color_255_255_255_1 = new B.Color(255, 255, 255, 1);
   C.Duration_0 = new P.Duration(0);
   C.JS_CONST_0 = function(hooks) {
   if (typeof dartExperimentalFixupGetTag != "function") return hooks;

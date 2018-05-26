@@ -1,4 +1,5 @@
 import 'dart:html';
+import 'Drawable.dart';
 import 'Game.dart';
 
 /**
@@ -43,8 +44,41 @@ class Screen {
      * Updates the screen and redraws it
      */
     void update() {
-        this.renderer.fillStyle = "lightblue";
+        //Clears screen
+        this.renderer.fillStyle = "black";
         this.renderer.fillRect(0, 0, this.screen.width, this.screen.height);
+        //Gets the game's logical viewport
+        var logicalX = this.game.player.center()[0] - this.game.width / 2;
+        var logicalY = this.game.player.center()[1] - this.game.height / 2;
+        if (logicalX < 0) {
+            logicalX = 0;
+        }
+        if (logicalX + this.game.width > this.game.level.width) {
+            logicalX = this.game.level.width - this.game.width;
+        }
+        if (logicalY < 0) {
+            logicalY = 0;
+        }
+        if (logicalY + this.game.height > this.game.level.height) {
+            logicalY = this.game.level.height - this.game.height;
+        }
+        //Gets a conversion between logical coordinates and screen coordinates
+        int stretchX = this.game.width / this.screen.width;
+        int stretchY = this.game.height / this.screen.height;
+        //Draws all of game objects
+        List<Drawable> drawables = new List.from(this.game.level.drawables);
+        drawables.addAll(this.game.entities);
+        drawables.add(this.game.player);
+        for (final obj in drawables) {
+            if (obj.x + obj.w < logicalX || obj.y + obj.h < logicalY || obj.x > logicalX + this.game.width || obj.y > logicalY + this.game.height) {
+                continue;
+            }
+            this.renderer.fillStyle = obj.bg.toString();
+            this.renderer.fillRect((obj.x - logicalX) * stretchX, (obj.y - logicalY) * stretchY, obj.w * stretchX, obj.h * stretchY);
+            if (obj.sprite.src.isNotEmpty) {
+                this.renderer.drawImageToRect(obj.sprite, new Rectangle((obj.x - logicalX) * stretchX, (obj.y - logicalY) * stretchY, obj.w * stretchX, obj.h * stretchY));
+            }
+        }
     }
 
 }
