@@ -749,6 +749,14 @@
     },
     JSNumber: {
       "^": "Interceptor;",
+      round$0: function(receiver) {
+        if (receiver > 0) {
+          if (receiver !== 1 / 0)
+            return Math.round(receiver);
+        } else if (receiver > -1 / 0)
+          return 0 - Math.round(0 - receiver);
+        throw H.wrapException(new P.UnsupportedError("" + receiver + ".round()"));
+      },
       toString$0: function(receiver) {
         if (receiver === 0 && 1 / receiver < 0)
           return "-0.0";
@@ -6376,13 +6384,13 @@
           t1 = window.innerWidth;
           if (typeof t1 !== "number")
             return t1.$mul();
-          t6.height = t1 * t3 / t4;
+          t6.height = C.JSDouble_methods.round$0(t1 * t3 / t4);
         } else {
           t6.height = window.innerHeight;
           t1 = window.innerHeight;
           if (typeof t1 !== "number")
             return t1.$mul();
-          t6.width = t1 * t4 / t3;
+          t6.width = C.JSDouble_methods.round$0(t1 * t4 / t3);
         }
         t2.update$0();
       },
@@ -6538,6 +6546,7 @@
   var $ = Isolate.$isolateProperties;
   C.Interceptor_methods = J.Interceptor.prototype;
   C.JSArray_methods = J.JSArray.prototype;
+  C.JSDouble_methods = J.JSDouble.prototype;
   C.JSInt_methods = J.JSInt.prototype;
   C.JSNumber_methods = J.JSNumber.prototype;
   C.JSString_methods = J.JSString.prototype;

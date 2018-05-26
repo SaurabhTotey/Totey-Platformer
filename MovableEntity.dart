@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'Drawable.dart';
 import 'Entity.dart';
 import 'Game.dart';
 
@@ -15,15 +16,16 @@ class MovableEntity extends Entity {
     /**
      * Makes an entity given its starting position and velocity
      */
-    MovableEntity(int x, int y, int w, int h, [this.velocityX = 0.0, this.velocityY = 0.0]) : super(x, y, w, h);
+    MovableEntity(int x, int y, int w, int h, {this.velocityX = 0.0, this.velocityY = 0.0, String spriteSrc = "", Color bg = const Color(0, 0, 0, 0.0)}) : super(x, y, w, h, spriteSrc: spriteSrc, bg: bg);
 
     /**
      * What the entity does every tick
      * Just moves by its velocity
      */
     void act(Game game) {
-        this.x += this.velocityX;
-        this.y += this.velocityY;
+        this.x = (this.x + this.velocityX).round();
+        this.y = (this.y + this.velocityY).round();
+        this.velocityY -= game.level.gravity;
     }
 
     /**

@@ -28,10 +28,10 @@ class Screen {
         void resizeProc ([Event resizeEvent = null]) {
             if (window.innerWidth / aspectRatio[0] < window.innerHeight / aspectRatio[1]) {
                 this.screen.width = window.innerWidth;
-                this.screen.height = window.innerWidth * aspectRatio[1] / aspectRatio[0];
+                this.screen.height = (window.innerWidth * aspectRatio[1] / aspectRatio[0]).round();
             } else {
                 this.screen.height = window.innerHeight;
-                this.screen.width = window.innerHeight * aspectRatio[0] / aspectRatio[1];
+                this.screen.width = (window.innerHeight * aspectRatio[0] / aspectRatio[1]).round();
             }
             this.update();
         };

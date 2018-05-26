@@ -58,3 +58,10 @@ class Drawable {
     List<double> center() => [this.x + this.w / 2, this.y + this.h / 2];
 
 }
+
+/**
+ * Returns whether two drawables intersect
+ */
+bool intersect(Drawable first, Drawable second) {
+    return first.x < second.x + second.w && first.x + first.w > second.x && first.y < second.y + second.h && first.y + first.h > second.y;
+}

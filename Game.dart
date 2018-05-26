@@ -1,3 +1,6 @@
+import 'Entity.dart';
+import 'Level.dart';
+import 'Player.dart';
 
 /**
  * The class that handles all of the game logic
@@ -12,5 +15,28 @@ class Game {
     final ticksPerSecond = 30;
     //Whether the game is in progress or not
     bool isFinished = false;
+    //The current level of the game
+    Level level;
+    //The player of the game
+    Player player;
+    //The other entities in the game
+    List<Entity> entities;
+
+    /**
+     * Constructs a game given a level
+     */
+    Game(this.level) {
+        this.player = new Player(this.level.startingPosition[0], this.level.startingPosition[1]);
+        this.entities = new List.from(this.level.entities);
+    }
+
+    /**
+     * What happens every tick
+     * Handles propogating updates to all other entities
+     */
+    void update() {
+        this.player.act(this);
+        this.entities.forEach((entity) => entity.act(this));
+    }
 
 }
