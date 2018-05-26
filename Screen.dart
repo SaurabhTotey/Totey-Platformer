@@ -65,8 +65,8 @@ class Screen {
             logicalY = this.game.level.height - this.game.height;
         }
         //Gets a conversion between logical coordinates and screen coordinates
-        int stretchX = this.game.width / this.screen.width;
-        int stretchY = this.game.height / this.screen.height;
+        double stretchX = this.screen.width / this.game.width;
+        double stretchY = this.screen.height / this.game.height;
         //Draws all of game objects
         List<Drawable> drawables = new List.from(this.game.level.drawables);
         drawables.addAll(this.game.entities);

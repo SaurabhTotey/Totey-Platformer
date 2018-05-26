@@ -10,10 +10,10 @@ import 'SolidPlatform.dart';
  * Entry point of the program
  */
 void main() {
-    //Temporary crappy game objects for testing purposes
+    //Temporary crappy level for testing purposes
     final crapTestLevel = new Level(startingPosition: [0, 0], entities: [new SolidPlatform(0, 800, 800, 100), new EndBlock(900, 750)], drawables: [new Drawable(0, 0, 1600, 900, bg: const Color(135, 206, 250))]);
-    Game game = new Game(crapTestLevel);
 
+    Game game = new Game(crapTestLevel);
     Screen screen = new Screen(game);
 
     //Times game updates to happen periodically

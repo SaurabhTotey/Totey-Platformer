@@ -6556,12 +6556,12 @@
         t5 = this.screen;
         t6 = t5.width;
         if (typeof t6 !== "number")
-          return H.iae(t6);
-        stretchX = t1 / t6;
+          return t6.$div();
+        stretchX = t6 / t1;
         t5 = t5.height;
         if (typeof t5 !== "number")
-          return H.iae(t5);
-        stretchY = t3 / t5;
+          return t5.$div();
+        stretchY = t5 / t3;
         drawables = P.List_List$from(t4.drawables, true, null);
         C.JSArray_methods.addAll$1(drawables, t2.entities);
         C.JSArray_methods.add$1(drawables, t2.player);
