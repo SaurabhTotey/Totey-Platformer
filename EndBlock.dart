@@ -11,7 +11,7 @@ class EndBlock extends Entity {
      * Constructs an EndBlock given a position
      * EndBlocks are currently black and 50 x 50
      */
-    EndBlock(int x, int y) : super(x, y, 50, 50, bg: const Color(255, 255, 255));
+    EndBlock(int x, int y) : super(x, y, 50, 50, spriteSrc: "res/rainbowSquare.png");
 
     /**
      * Every tick, the EndBlock checks whether it has been collided with by the player

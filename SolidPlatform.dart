@@ -11,7 +11,7 @@ class SolidPlatform extends Entity {
     /**
      * Constructs a solid platform given all of the dimensions
      */
-    SolidPlatform(int x, int y, int w, int h) : super(x, y, w, h, bg: const Color(0, 255, 0));
+    SolidPlatform(int x, int y, int w, int h) : super(x, y, w, h, spriteSrc: "res/ground.png");
 
     /**
      * SolidPlatforms check for collisions with the player every tick and act accordingly

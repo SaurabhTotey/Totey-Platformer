@@ -678,6 +678,21 @@
       map$1: function(receiver, f) {
         return new H.MappedListIterable(receiver, f, [H.getTypeArgumentByIndex(receiver, 0), null]);
       },
+      firstWhere$2$orElse: function(receiver, test, orElse) {
+        var end, i, element;
+        end = receiver.length;
+        for (i = 0; i < end; ++i) {
+          element = receiver[i];
+          if (test.call$1(element) === true)
+            return element;
+          if (receiver.length !== end)
+            throw H.wrapException(new P.ConcurrentModificationError(receiver));
+        }
+        throw H.wrapException(H.IterableElementError_noElement());
+      },
+      firstWhere$1: function($receiver, test) {
+        return this.firstWhere$2$orElse($receiver, test, null);
+      },
       elementAt$1: function(receiver, index) {
         if (index < 0 || index >= receiver.length)
           return H.ioore(receiver, index);
@@ -3569,13 +3584,13 @@
       }
     },
     initHooks_closure0: {
-      "^": "Closure:7;getUnknownTag",
+      "^": "Closure:8;getUnknownTag",
       call$2: function(o, tag) {
         return this.getUnknownTag(o, tag);
       }
     },
     initHooks_closure1: {
-      "^": "Closure:8;prototypeForTag",
+      "^": "Closure:9;prototypeForTag",
       call$1: function(tag) {
         return this.prototypeForTag(tag);
       }
@@ -4055,7 +4070,7 @@
       }
     },
     _AsyncRun__initializeScheduleImmediate_closure: {
-      "^": "Closure:9;_box_0,div,span",
+      "^": "Closure:10;_box_0,div,span",
       call$1: function(callback) {
         var t1, t2;
         ++init.globalState.topEventLoop._activeJsAsyncCount;
@@ -4234,7 +4249,7 @@
         P._Future__propagateToListeners(this, listeners);
       }, function(error) {
         return this._completeError$2(error, null);
-      }, "_completeError$1", "call$2", "call$1", "get$_completeError", 2, 2, 10, 0],
+      }, "_completeError$1", "call$2", "call$1", "get$_completeError", 2, 2, 11, 0],
       _Future$value$1: function(value, $T) {
         this._state = 4;
         this._resultOrListeners = value;
@@ -4388,7 +4403,7 @@
       }
     },
     _Future__chainForeignFuture_closure0: {
-      "^": "Closure:11;target",
+      "^": "Closure:12;target",
       call$2: function(error, stackTrace) {
         this.target._completeError$2(error, stackTrace);
       },
@@ -4921,7 +4936,7 @@
       }],
       _handleError$2: [function(error, stackTrace) {
         this._stream._handleError$3(error, stackTrace, this);
-      }, "call$2", "get$_handleError", 4, 0, 12],
+      }, "call$2", "get$_handleError", 4, 0, 13],
       _handleDone$0: [function() {
         this._async$_close$0();
       }, "call$0", "get$_handleDone", 0, 0, 1],
@@ -5521,7 +5536,7 @@
       $asEfficientLengthIterable: null
     },
     Maps_mapToString_closure: {
-      "^": "Closure:13;_box_0,result",
+      "^": "Closure:14;_box_0,result",
       call$2: function(k, v) {
         var t1, t2;
         t1 = this._box_0;
@@ -6081,7 +6096,7 @@
     },
     HtmlElement: {
       "^": "Element;",
-      "%": "HTMLBRElement|HTMLBaseElement|HTMLButtonElement|HTMLCanvasElement|HTMLContentElement|HTMLDListElement|HTMLDataListElement|HTMLDetailsElement|HTMLDialogElement|HTMLDirectoryElement|HTMLDivElement|HTMLEmbedElement|HTMLFieldSetElement|HTMLFontElement|HTMLFrameElement|HTMLHRElement|HTMLHeadElement|HTMLHeadingElement|HTMLHtmlElement|HTMLIFrameElement|HTMLImageElement|HTMLKeygenElement|HTMLLIElement|HTMLLabelElement|HTMLLegendElement|HTMLLinkElement|HTMLMapElement|HTMLMarqueeElement|HTMLMenuElement|HTMLMenuItemElement|HTMLMetaElement|HTMLMeterElement|HTMLModElement|HTMLOListElement|HTMLObjectElement|HTMLOptGroupElement|HTMLOptionElement|HTMLOutputElement|HTMLParagraphElement|HTMLParamElement|HTMLPictureElement|HTMLPreElement|HTMLProgressElement|HTMLQuoteElement|HTMLScriptElement|HTMLShadowElement|HTMLSlotElement|HTMLSourceElement|HTMLSpanElement|HTMLStyleElement|HTMLTableCaptionElement|HTMLTableCellElement|HTMLTableColElement|HTMLTableDataCellElement|HTMLTableElement|HTMLTableHeaderCellElement|HTMLTableRowElement|HTMLTableSectionElement|HTMLTemplateElement|HTMLTextAreaElement|HTMLTitleElement|HTMLTrackElement|HTMLUListElement|HTMLUnknownElement;HTMLElement"
+      "%": "HTMLBRElement|HTMLBaseElement|HTMLButtonElement|HTMLCanvasElement|HTMLContentElement|HTMLDListElement|HTMLDataListElement|HTMLDetailsElement|HTMLDialogElement|HTMLDirectoryElement|HTMLDivElement|HTMLFieldSetElement|HTMLFontElement|HTMLFrameElement|HTMLHRElement|HTMLHeadElement|HTMLHeadingElement|HTMLHtmlElement|HTMLKeygenElement|HTMLLIElement|HTMLLabelElement|HTMLLegendElement|HTMLLinkElement|HTMLMapElement|HTMLMarqueeElement|HTMLMenuElement|HTMLMenuItemElement|HTMLMetaElement|HTMLMeterElement|HTMLModElement|HTMLOListElement|HTMLObjectElement|HTMLOptGroupElement|HTMLOptionElement|HTMLOutputElement|HTMLParagraphElement|HTMLParamElement|HTMLPictureElement|HTMLPreElement|HTMLProgressElement|HTMLQuoteElement|HTMLShadowElement|HTMLSlotElement|HTMLSpanElement|HTMLStyleElement|HTMLTableCaptionElement|HTMLTableCellElement|HTMLTableColElement|HTMLTableDataCellElement|HTMLTableElement|HTMLTableHeaderCellElement|HTMLTableRowElement|HTMLTableSectionElement|HTMLTemplateElement|HTMLTextAreaElement|HTMLTitleElement|HTMLUListElement|HTMLUnknownElement;HTMLElement"
     },
     AnchorElement: {
       "^": "HtmlElement;",
@@ -6129,6 +6144,10 @@
       $isInterceptor: 1,
       "%": ";Element"
     },
+    EmbedElement: {
+      "^": "HtmlElement;src=",
+      "%": "HTMLEmbedElement"
+    },
     ErrorEvent: {
       "^": "Event;error=",
       "%": "ErrorEvent"
@@ -6153,8 +6172,18 @@
       "^": "HtmlElement;length=",
       "%": "HTMLFormElement"
     },
+    IFrameElement: {
+      "^": "HtmlElement;src=",
+      "%": "HTMLIFrameElement"
+    },
+    ImageElement: {
+      "^": "HtmlElement;src=",
+      $isImageElement: 1,
+      $isObject: 1,
+      "%": "HTMLImageElement"
+    },
     InputElement: {
-      "^": "HtmlElement;",
+      "^": "HtmlElement;src=",
       $isInterceptor: 1,
       "%": "HTMLInputElement"
     },
@@ -6163,7 +6192,7 @@
       "%": "KeyboardEvent"
     },
     MediaElement: {
-      "^": "HtmlElement;error=",
+      "^": "HtmlElement;error=,src=",
       "%": "HTMLAudioElement|HTMLMediaElement|HTMLVideoElement"
     },
     Navigator: {
@@ -6179,13 +6208,25 @@
       },
       "%": "Attr|Document|HTMLDocument|XMLDocument;Node"
     },
+    ScriptElement: {
+      "^": "HtmlElement;src=",
+      "%": "HTMLScriptElement"
+    },
     SelectElement: {
       "^": "HtmlElement;length=",
       "%": "HTMLSelectElement"
     },
+    SourceElement: {
+      "^": "HtmlElement;src=",
+      "%": "HTMLSourceElement"
+    },
     SpeechRecognitionError: {
       "^": "Event;error=",
       "%": "SpeechRecognitionError"
+    },
+    TrackElement: {
+      "^": "HtmlElement;src=",
+      "%": "HTMLTrackElement"
     },
     UIEvent: {
       "^": "Event;",
@@ -6584,12 +6625,73 @@
   }], ["", "../Player.dart",, R, {
     "^": "",
     Player: {
-      "^": "MovableEntity;velocityX,velocityY,isGrounded,x,y,w,h,bg,sprite",
+      "^": "MovableEntity;standingSprite,jumpingSprite,fallingSprites,rightSprites,leftSprites,velocityX,velocityY,isGrounded,x,y,w,h,bg,sprite",
       act$1: function(game) {
+        var t1 = this.velocityY;
+        if (t1 < 0)
+          this.sprite = this.jumpingSprite;
+        else if (t1 > 0 && !this.isGrounded)
+          this.sprite = this.fallingSprites;
+        else {
+          t1 = this.velocityX;
+          if (t1 > 0)
+            this.sprite = C.JSArray_methods.firstWhere$1(this.rightSprites, new R.Player_act_closure(this));
+          else if (t1 < 0)
+            this.sprite = C.JSArray_methods.firstWhere$1(this.leftSprites, new R.Player_act_closure0(this));
+          else
+            this.sprite = this.standingSprite;
+        }
         if (this.velocityY !== 0)
           this.isGrounded = false;
         this.super$MovableEntity$act(game);
-        this.velocityX = 0;
+        t1 = this.velocityX;
+        if (t1 > 0) {
+          t1 -= 10;
+          this.velocityX = t1;
+          if (t1 < 0)
+            this.velocityX = 0;
+        } else if (t1 < 0) {
+          t1 += 10;
+          this.velocityX = t1;
+          if (t1 > 0)
+            this.velocityX = 0;
+        }
+      },
+      Player$2: function(x, y) {
+        var t1, t2, t3, i, i0;
+        t1 = this.standingSprite;
+        t1.src = "res/playerSprites/standing.png";
+        this.jumpingSprite.src = "res/playerSprites/jumping.png";
+        this.fallingSprites.src = "res/playerSprites/falling.png";
+        for (t2 = this.rightSprites, t3 = this.leftSprites, i = 0; i < 2; i = i0) {
+          i0 = i + 1;
+          t2[i].src = "res/playerSprites/right" + i0 + ".png";
+          t3[i].src = "res/playerSprites/left" + i0 + ".png";
+        }
+        this.sprite = t1;
+      },
+      static: {
+        Player$: function(x, y) {
+          var t1, t2;
+          t1 = new R.Player(W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null), [W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null)], [W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null)], 0, 0, false, x, y, 50, 100, C.Color_0_0_0_0, null);
+          t2 = W.ImageElement_ImageElement(null, null, null);
+          t1.sprite = t2;
+          t2.src = "";
+          t1.Player$2(x, y);
+          return t1;
+        }
+      }
+    },
+    Player_act_closure: {
+      "^": "Closure:6;$this",
+      call$1: function(img) {
+        return !J.$eq$(this.$this.sprite, img);
+      }
+    },
+    Player_act_closure0: {
+      "^": "Closure:6;$this",
+      call$1: function(img) {
+        return !J.$eq$(this.$this.sprite, img);
       }
     }
   }], ["", "../Screen.dart",, D, {
@@ -6652,16 +6754,16 @@
           t7 = obj.w * stretchX;
           t8 = obj.h * stretchY;
           t5.fillRect((t4 - logicalX) * stretchX, (t6 - logicalY) * stretchY, t7, t8);
-          t4 = obj.sprite;
-          if (t4.src.length !== 0) {
-            t5 = this.renderer;
+          if (J.get$src$x(obj.sprite).length !== 0) {
+            t4 = this.renderer;
+            t5 = obj.sprite;
             t6 = obj.x;
             t9 = obj.y;
             if (t7 < 0)
               t7 = -t7 * 0;
             if (t8 < 0)
               t8 = -t8 * 0;
-            t5.drawImage(t4, (t6 - logicalX) * stretchX, (t9 - logicalY) * stretchY, t7, t8);
+            t4.drawImage(t5, (t6 - logicalX) * stretchX, (t9 - logicalY) * stretchY, t7, t8);
           }
         }
       },
@@ -6685,7 +6787,7 @@
       }
     },
     Screen_resizeProc: {
-      "^": "Closure:14;$this",
+      "^": "Closure:15;$this",
       call$1: function(resizeEvent) {
         var t1, t2, t3, t4, t5, t6;
         t1 = window.innerWidth;
@@ -6758,7 +6860,7 @@
       }
     },
     SolidPlatform_act_closure: {
-      "^": "Closure:15;",
+      "^": "Closure:16;",
       call$1: function(e) {
         return e instanceof R.MovableEntity;
       }
@@ -6768,37 +6870,33 @@
     main: [function() {
       var t1, t2, t3, t4, t5, t6, t7, t8, crapTestLevel, game, $screen, pressedKeys;
       t1 = [0, 0];
-      t2 = new G.SolidPlatform(0, 1700, 800, 50, C.Color_0_255_0_1, null);
+      t2 = new G.SolidPlatform(0, 1700, 800, 50, C.Color_0_0_0_0, null);
       t3 = W.ImageElement_ImageElement(null, null, null);
       t2.sprite = t3;
-      t3.src = "";
-      t3 = new G.SolidPlatform(800, 1600, 800, 50, C.Color_0_255_0_1, null);
+      t3.src = "res/ground.png";
+      t3 = new G.SolidPlatform(800, 1600, 800, 50, C.Color_0_0_0_0, null);
       t4 = W.ImageElement_ImageElement(null, null, null);
       t3.sprite = t4;
-      t4.src = "";
-      t4 = new G.SolidPlatform(1600, 1500, 800, 50, C.Color_0_255_0_1, null);
+      t4.src = "res/ground.png";
+      t4 = new G.SolidPlatform(1600, 1500, 800, 50, C.Color_0_0_0_0, null);
       t5 = W.ImageElement_ImageElement(null, null, null);
       t4.sprite = t5;
-      t5.src = "";
-      t5 = new G.SolidPlatform(2400, 1400, 400, 50, C.Color_0_255_0_1, null);
+      t5.src = "res/ground.png";
+      t5 = new G.SolidPlatform(2400, 1400, 400, 50, C.Color_0_0_0_0, null);
       t6 = W.ImageElement_ImageElement(null, null, null);
       t5.sprite = t6;
-      t6.src = "";
-      t6 = new O.EndBlock(3100, 1200, 50, 50, C.Color_255_255_255_1, null);
+      t6.src = "res/ground.png";
+      t6 = new O.EndBlock(3100, 1200, 50, 50, C.Color_0_0_0_0, null);
       t7 = W.ImageElement_ImageElement(null, null, null);
       t6.sprite = t7;
-      t7.src = "";
+      t7.src = "res/rainbowSquare.png";
       t7 = new B.Drawable(0, 0, 3200, 1800, C.Color_135_206_250_1, null);
       t8 = W.ImageElement_ImageElement(null, null, null);
       t7.sprite = t8;
       t8.src = "";
       crapTestLevel = new Q.Level(3200, 1800, t1, [t2, t3, t4, t5, t6], [t7], 1);
       game = new G.Game(1600, 900, 30, false, crapTestLevel, null, null);
-      t1 = new R.Player(0, 0, false, t1[0], t1[1], 50, 100, C.Color_255_100_100_1, null);
-      t7 = W.ImageElement_ImageElement(null, null, null);
-      t1.sprite = t7;
-      t7.src = "";
-      game.player = t1;
+      game.player = R.Player$(t1[0], t1[1]);
       game.entities = P.List_List$from(crapTestLevel.entities, true, null);
       $screen = D.Screen$(game);
       pressedKeys = [];
@@ -6810,7 +6908,7 @@
       P.Timer_Timer$periodic(P.Duration$(0, 0, 0, C.JSDouble_methods.round$0(1000 / $screen.framesPerSecond), 0, 0), new F.main_closure3(game, $screen));
     }, "call$0", "main__main$closure", 0, 0, 1],
     main_closure: {
-      "^": "Closure:6;pressedKeys",
+      "^": "Closure:7;pressedKeys",
       call$1: function($event) {
         var t1 = this.pressedKeys;
         if (!C.JSArray_methods.contains$1(t1, J.get$keyCode$x($event)))
@@ -6818,7 +6916,7 @@
       }
     },
     main_closure0: {
-      "^": "Closure:6;pressedKeys",
+      "^": "Closure:7;pressedKeys",
       call$1: function($event) {
         C.JSArray_methods.remove$1(this.pressedKeys, J.get$keyCode$x($event));
       }
@@ -6964,6 +7062,9 @@
   J.get$length$asx = function(receiver) {
     return J.getInterceptor$asx(receiver).get$length(receiver);
   };
+  J.get$src$x = function(receiver) {
+    return J.getInterceptor$x(receiver).get$src(receiver);
+  };
   J.get$x$x = function(receiver) {
     return J.getInterceptor$x(receiver).get$x(receiver);
   };
@@ -7022,10 +7123,8 @@
   C.UnknownJavaScriptObject_methods = J.UnknownJavaScriptObject.prototype;
   C.C__DelayedDone = new P._DelayedDone();
   C.C__RootZone = new P._RootZone();
-  C.Color_0_255_0_1 = new B.Color(0, 255, 0, 1);
+  C.Color_0_0_0_0 = new B.Color(0, 0, 0, 0);
   C.Color_135_206_250_1 = new B.Color(135, 206, 250, 1);
-  C.Color_255_100_100_1 = new B.Color(255, 100, 100, 1);
-  C.Color_255_255_255_1 = new B.Color(255, 255, 255, 1);
   C.Duration_0 = new P.Duration(0);
   C.JS_CONST_0 = function(hooks) {
   if (typeof dartExperimentalFixupGetTag != "function") return hooks;
@@ -7270,7 +7369,7 @@
   Isolate = Isolate.$finishIsolateConstructor(Isolate);
   $ = new Isolate();
   init.metadata = [null];
-  init.types = [{func: 1}, {func: 1, v: true}, {func: 1, args: [,]}, {func: 1, args: [P.Timer]}, {func: 1, v: true, args: [{func: 1, v: true}]}, {func: 1, ret: P.String, args: [P.int]}, {func: 1, args: [W.KeyEvent]}, {func: 1, args: [, P.String]}, {func: 1, args: [P.String]}, {func: 1, args: [{func: 1, v: true}]}, {func: 1, v: true, args: [P.Object], opt: [P.StackTrace]}, {func: 1, args: [,], opt: [,]}, {func: 1, v: true, args: [, P.StackTrace]}, {func: 1, args: [,,]}, {func: 1, v: true, opt: [W.Event]}, {func: 1, args: [O.Entity]}];
+  init.types = [{func: 1}, {func: 1, v: true}, {func: 1, args: [,]}, {func: 1, args: [P.Timer]}, {func: 1, v: true, args: [{func: 1, v: true}]}, {func: 1, ret: P.String, args: [P.int]}, {func: 1, args: [W.ImageElement]}, {func: 1, args: [W.KeyEvent]}, {func: 1, args: [, P.String]}, {func: 1, args: [P.String]}, {func: 1, args: [{func: 1, v: true}]}, {func: 1, v: true, args: [P.Object], opt: [P.StackTrace]}, {func: 1, args: [,], opt: [,]}, {func: 1, v: true, args: [, P.StackTrace]}, {func: 1, args: [,,]}, {func: 1, v: true, opt: [W.Event]}, {func: 1, args: [O.Entity]}];
   function convertToFastObject(properties) {
     function MyClass() {
     }
