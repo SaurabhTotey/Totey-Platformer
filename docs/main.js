@@ -650,15 +650,23 @@
         this.checkGrowable$1(receiver, "add");
         receiver.push(value);
       },
-      remove$1: function(receiver, element) {
-        var i;
-        this.checkGrowable$1(receiver, "remove");
-        for (i = 0; i < receiver.length; ++i)
-          if (J.$eq$(receiver[i], element)) {
-            receiver.splice(i, 1);
-            return true;
-          }
-        return false;
+      _removeWhere$2: function(receiver, test, removeMatching) {
+        var retained, end, i, element, t1;
+        retained = [];
+        end = receiver.length;
+        for (i = 0; i < end; ++i) {
+          element = receiver[i];
+          if (test.call$1(element) !== true)
+            retained.push(element);
+          if (receiver.length !== end)
+            throw H.wrapException(new P.ConcurrentModificationError(receiver));
+        }
+        t1 = retained.length;
+        if (t1 === end)
+          return;
+        this.set$length(receiver, t1);
+        for (i = 0; i < retained.length; ++i)
+          receiver[i] = retained[i];
       },
       addAll$1: function(receiver, collection) {
         var t1, _i;
@@ -824,6 +832,16 @@
           throw H.wrapException(H.argumentErrorValue(other));
         return receiver + other;
       },
+      $sub: function(receiver, other) {
+        if (typeof other !== "number")
+          throw H.wrapException(H.argumentErrorValue(other));
+        return receiver - other;
+      },
+      $mul: function(receiver, other) {
+        if (typeof other !== "number")
+          throw H.wrapException(H.argumentErrorValue(other));
+        return receiver * other;
+      },
       _tdivFast$1: function(receiver, other) {
         return (receiver | 0) === receiver ? receiver / other | 0 : this._tdivSlow$1(receiver, other);
       },
@@ -852,6 +870,11 @@
         if (typeof other !== "number")
           throw H.wrapException(H.argumentErrorValue(other));
         return receiver < other;
+      },
+      $gt: function(receiver, other) {
+        if (typeof other !== "number")
+          throw H.wrapException(H.argumentErrorValue(other));
+        return receiver > other;
       },
       $isnum: 1
     },
@@ -5733,12 +5756,21 @@
     },
     "+double": 0,
     Duration: {
-      "^": "Object;_duration",
+      "^": "Object;_duration<",
       $add: function(_, other) {
         return new P.Duration(C.JSInt_methods.$add(this._duration, other.get$_duration()));
       },
+      $sub: function(_, other) {
+        return new P.Duration(this._duration - other.get$_duration());
+      },
+      $mul: function(_, factor) {
+        return new P.Duration(C.JSNumber_methods.round$0(this._duration * factor));
+      },
       $lt: function(_, other) {
-        return C.JSInt_methods.$lt(this._duration, other.get$_duration());
+        return this._duration < other.get$_duration();
+      },
+      $gt: function(_, other) {
+        return this._duration > other.get$_duration();
       },
       $eq: function(_, other) {
         if (other == null)
@@ -6365,26 +6397,34 @@
         return "Rectangle (" + H.S(this.left) + ", " + H.S(this.top) + ") " + H.S(this.width) + " x " + H.S(this.height);
       },
       $eq: function(_, other) {
-        var t1, t2, t3, t4;
+        var t1, t2, t3, t4, t5, t6;
         if (other == null)
           return false;
         if (!(other instanceof P.Rectangle))
           return false;
         t1 = this.left;
         t2 = other.left;
-        if (t1 === t2) {
-          t3 = this.top;
-          t4 = other.top;
-          t1 = t3 === t4 && t1 + this.width === t2 + other.width && t3 + this.height === t4 + other.height;
+        t3 = J.getInterceptor(t1);
+        if (t3.$eq(t1, t2)) {
+          t4 = this.top;
+          t5 = other.top;
+          t6 = J.getInterceptor(t4);
+          t1 = t6.$eq(t4, t5) && J.$eq$(t3.$add(t1, this.width), J.$add$ns(t2, other.width)) && J.$eq$(t6.$add(t4, this.height), J.$add$ns(t5, other.height));
         } else
           t1 = false;
         return t1;
       },
       get$hashCode: function(_) {
-        var t1, t2;
+        var t1, t2, t3, t4, t5, t6;
         t1 = this.left;
-        t2 = this.top;
-        return P._JenkinsSmiHash_finish(P._JenkinsSmiHash_combine(P._JenkinsSmiHash_combine(P._JenkinsSmiHash_combine(P._JenkinsSmiHash_combine(0, t1 & 0x1FFFFFFF), t2 & 0x1FFFFFFF), t1 + this.width & 0x1FFFFFFF), t2 + this.height & 0x1FFFFFFF));
+        t2 = J.getInterceptor(t1);
+        t3 = t2.get$hashCode(t1);
+        t4 = this.top;
+        t5 = J.getInterceptor(t4);
+        t6 = t5.get$hashCode(t4);
+        t1 = J.get$hashCode$(t2.$add(t1, this.width));
+        t4 = J.get$hashCode$(t5.$add(t4, this.height));
+        return P._JenkinsSmiHash_finish(P._JenkinsSmiHash_combine(P._JenkinsSmiHash_combine(P._JenkinsSmiHash_combine(P._JenkinsSmiHash_combine(0, t3), t6), t1), t4));
       }
     },
     Rectangle: {
@@ -6609,25 +6649,26 @@
     "^": ""
   }], ["dart.dom.web_sql", "dart:web_sql",, P, {
     "^": ""
+  }], ["", "../CheckPointGrave.dart",, N, {
+    "^": "",
+    CheckPointGrave: {
+      "^": "Entity;respawnPoint,x,y,w,h,bg,sprite",
+      act$1: function(game) {
+        var t1 = game.player;
+        if (t1.lastCheckPoint === this.respawnPoint)
+          this.sprite = $.$get$CheckPointGrave_activatedSprite();
+        else
+          this.sprite = $.$get$CheckPointGrave_inertSprite();
+        if (B.intersect(this, t1)) {
+          game.player.lastCheckPoint = this.respawnPoint;
+          this.sprite = $.$get$CheckPointGrave_activatedSprite();
+        }
+      }
+    }
   }], ["", "../Drawable.dart",, B, {
     "^": "",
     intersect: function(first, second) {
-      var t1, t2, t3;
-      t1 = first.x;
-      t2 = J.get$x$x(second);
-      t3 = second.get$w();
-      if (typeof t2 !== "number")
-        return t2.$add();
-      if (t1 < t2 + t3)
-        if (first.x + first.w > second.x) {
-          t1 = first.y;
-          t2 = second.y;
-          t1 = t1 < t2 + second.h && t1 + first.h > t2;
-        } else
-          t1 = false;
-      else
-        t1 = false;
-      return t1;
+      return J.$lt$n(first.x, J.$add$ns(J.get$x$x(second), second.get$w())) && J.$gt$n(J.$add$ns(first.x, first.w), second.x) && J.$lt$n(first.y, J.$add$ns(second.y, second.h)) && J.$gt$n(J.$add$ns(first.y, first.h), second.y);
     },
     Color: {
       "^": "Object;r,g,b,a",
@@ -6638,7 +6679,7 @@
     Drawable: {
       "^": "Object;x>,y,w<,h,bg,sprite",
       center$0: function() {
-        return [this.x + this.w / 2, this.y + this.h / 2];
+        return [J.$add$ns(this.x, this.w / 2), J.$add$ns(this.y, this.h / 2)];
       }
     }
   }], ["", "../EndBlock.dart",, O, {
@@ -6662,9 +6703,8 @@
       update$0: function() {
         this.player.act$1(this);
         C.JSArray_methods.forEach$1(this.entities, new G.Game_update_closure(this));
-        var t1 = this.player;
-        if (t1.y > this.level.height)
-          t1.loseLife$0();
+        if (J.$gt$n(this.player.y, this.level.height))
+          this.player.loseLife$0();
         if (this.player.lives <= 0)
           this.isFinished = true;
       }
@@ -6685,12 +6725,9 @@
     MovableEntity: {
       "^": "Entity;velocityX@,velocityY@,isGrounded,x,y,w,h,bg,sprite",
       act$1: ["super$MovableEntity$act", function(game) {
-        var t1, t2;
-        this.x = C.JSInt_methods.round$0(this.x + this.velocityX);
-        t1 = this.y;
-        t2 = this.velocityY;
-        this.y = C.JSInt_methods.round$0(t1 + t2);
-        this.velocityY = t2 + game.level.gravity;
+        this.x = J.round$0$n(J.$add$ns(this.x, this.velocityX));
+        this.y = J.round$0$n(J.$add$ns(this.y, this.velocityY));
+        this.velocityY = this.velocityY + game.level.gravity;
       }]
     }
   }], ["", "../Player.dart",, R, {
@@ -6698,7 +6735,7 @@
     Player: {
       "^": "MovableEntity;maxLives,lives,lastCheckPoint,standingSprite,jumpingSprite,fallingSprites,rightSprites,leftSprites,velocityX,velocityY,isGrounded,x,y,w,h,bg,sprite",
       act$1: function(game) {
-        var t1, t2, t3;
+        var t1, t2;
         t1 = this.velocityY;
         if (t1 < 0)
           this.sprite = this.jumpingSprite;
@@ -6728,23 +6765,26 @@
           if (t1 > 0)
             this.velocityX = 0;
         }
-        t1 = this.x;
-        if (t1 < 0) {
+        if (J.$lt$n(this.x, 0))
           this.x = 0;
-          t1 = 0;
-        }
-        t2 = this.w;
-        t3 = game.level.width;
-        if (t1 + t2 > t3)
-          this.x = t3 - t2;
-        if (this.y < 0)
+        t1 = this.w;
+        t2 = game.level;
+        if (J.$gt$n(J.$add$ns(this.x, t1), t2.width))
+          this.x = t2.width - t1;
+        if (J.$lt$n(this.y, 0))
           this.y = 0;
       },
       loseLife$0: function() {
+        var t1, t2;
         if (--this.lives <= 0)
           return;
-        var t1 = this.lastCheckPoint;
+        t1 = this.lastCheckPoint;
+        t2 = t1.length;
+        if (0 >= t2)
+          return H.ioore(t1, 0);
         this.x = t1[0];
+        if (1 >= t2)
+          return H.ioore(t1, 1);
         this.y = t1[1];
         this.velocityX = 0;
         this.velocityY = 0;
@@ -6792,27 +6832,25 @@
     Screen: {
       "^": "Object;screen,renderer,aspectRatio,framesPerSecond,game,livesSprite",
       update$0: function() {
-        var t1, t2, logicalX, t3, logicalY, t4, t5, t6, stretchX, stretchY, drawables, _i, obj, t7, t8, t9, t10, t11;
+        var t1, t2, logicalX, t3, logicalY, t4, t5, t6, stretchX, stretchY, drawables, t7, _i, obj, t8, t9, t10, t11, t12, t13;
         t1 = this.renderer;
         t1.fillStyle = "black";
         t2 = this.screen;
         t1.fillRect(0, 0, t2.width, t2.height);
         t2 = this.game;
         t1 = t2.width;
-        logicalX = t2.player.center$0()[0] - t1 / 2;
+        logicalX = J.$sub$n(t2.player.center$0()[0], t1 / 2);
         t3 = t2.height;
-        logicalY = t2.player.center$0()[1] - t3 / 2;
-        if (logicalX < 0)
+        logicalY = J.$sub$n(t2.player.center$0()[1], t3 / 2);
+        if (J.$lt$n(logicalX, 0))
           logicalX = 0;
         t4 = t2.level;
-        t5 = t4.width;
-        if (logicalX + t1 > t5)
-          logicalX = t5 - t1;
-        if (logicalY < 0)
+        if (J.$gt$n(J.$add$ns(logicalX, t1), t4.width))
+          logicalX = t4.width - t1;
+        if (J.$lt$n(logicalY, 0))
           logicalY = 0;
-        t5 = t4.height;
-        if (logicalY + t3 > t5)
-          logicalY = t5 - t3;
+        if (J.$gt$n(J.$add$ns(logicalY, t3), t4.height))
+          logicalY = t4.height - t3;
         t5 = this.screen;
         t6 = t5.width;
         if (typeof t6 !== "number")
@@ -6825,38 +6863,29 @@
         drawables = P.List_List$from(t4.drawables, true, null);
         C.JSArray_methods.addAll$1(drawables, t2.entities);
         C.JSArray_methods.add$1(drawables, t2.player);
-        for (t4 = drawables.length, t1 = logicalX + t1, t3 = logicalY + t3, t5 = [null], _i = 0; _i < drawables.length; drawables.length === t4 || (0, H.throwConcurrentModificationError)(drawables), ++_i) {
+        for (t4 = drawables.length, t5 = J.getInterceptor$ns(logicalX), t6 = J.getInterceptor$ns(logicalY), t7 = [null], _i = 0; _i < drawables.length; drawables.length === t4 || (0, H.throwConcurrentModificationError)(drawables), ++_i) {
           obj = drawables[_i];
-          t6 = J.get$x$x(obj);
-          t7 = obj.get$w();
-          if (typeof t6 !== "number")
-            return t6.$add();
-          if (!(t6 + t7 < logicalX)) {
-            t6 = obj.y;
-            t6 = t6 + obj.h < logicalY || obj.x > t1 || t6 > t3;
-          } else
-            t6 = true;
-          if (t6)
+          if (J.$lt$n(J.$add$ns(J.get$x$x(obj), obj.get$w()), logicalX) || J.$lt$n(J.$add$ns(obj.y, obj.h), logicalY) || J.$gt$n(obj.x, t5.$add(logicalX, t1)) || J.$gt$n(obj.y, t6.$add(logicalY, t3)))
             continue;
-          t6 = this.renderer;
-          t7 = obj.bg;
-          t6.fillStyle = "rgba(" + t7.r + "," + t7.g + "," + t7.b + "," + t7.a + ")";
-          t7 = this.renderer;
-          t6 = obj.x;
-          t8 = obj.y;
-          t9 = obj.w * stretchX;
-          t10 = obj.h * stretchY;
-          t7.fillRect((t6 - logicalX) * stretchX, (t8 - logicalY) * stretchY, t9, t10);
+          t8 = this.renderer;
+          t9 = obj.bg;
+          t8.fillStyle = "rgba(" + t9.r + "," + t9.g + "," + t9.b + "," + t9.a + ")";
+          t9 = this.renderer;
+          t8 = J.$mul$ns(J.$sub$n(obj.x, logicalX), stretchX);
+          t10 = J.$mul$ns(J.$sub$n(obj.y, logicalY), stretchY);
+          t11 = obj.w * stretchX;
+          t12 = obj.h * stretchY;
+          t9.fillRect(t8, t10, t11, t12);
           if (J.get$src$x(obj.sprite).length !== 0) {
-            t6 = this.renderer;
-            t7 = obj.sprite;
-            t8 = obj.x;
-            t11 = obj.y;
-            if (t9 < 0)
-              t9 = -t9 * 0;
-            if (t10 < 0)
-              t10 = -t10 * 0;
-            (t6 && C.CanvasRenderingContext2D_methods).drawImageToRect$2(t6, t7, new P.Rectangle((t8 - logicalX) * stretchX, (t11 - logicalY) * stretchY, t9, t10, t5));
+            t8 = this.renderer;
+            t9 = obj.sprite;
+            t10 = J.$mul$ns(J.$sub$n(obj.x, logicalX), stretchX);
+            t13 = J.$mul$ns(J.$sub$n(obj.y, logicalY), stretchY);
+            if (t11 < 0)
+              t11 = -t11 * 0;
+            if (t12 < 0)
+              t12 = -t12 * 0;
+            (t8 && C.CanvasRenderingContext2D_methods).drawImageToRect$2(t8, t9, new P.Rectangle(t10, t13, t11, t12, t7));
           }
         }
         t1 = this.renderer;
@@ -6950,27 +6979,28 @@
           entity = movables[_i];
           if (!B.intersect(this, entity))
             continue;
-          if (entity.center$0()[0] < this.x || entity.get$velocityX() > t3) {
+          if (J.$lt$n(entity.center$0()[0], this.x) || entity.get$velocityX() > t3) {
             entity.set$velocityX(0);
-            entity.x = this.x - entity.w;
+            entity.x = J.$sub$n(this.x, entity.w);
           }
           t6 = entity.x;
           t7 = entity.w / 2;
+          t6 = J.$add$ns(t6, t7);
           t8 = entity.y;
           t9 = entity.h;
           t10 = t9 / 2;
-          if ([t6 + t7, t8 + t10][0] > this.x + t3 || entity.get$velocityX() < t4) {
+          if (J.$gt$n([t6, J.$add$ns(t8, t10)][0], J.$add$ns(this.x, t3)) || entity.get$velocityX() < t4) {
             entity.set$velocityX(0);
-            entity.x = this.x + t3;
+            entity.x = J.$add$ns(this.x, t3);
           }
-          if ([entity.x + t7, entity.y + t10][1] < this.y || entity.get$velocityY() > t2) {
+          if (J.$lt$n([J.$add$ns(entity.x, t7), J.$add$ns(entity.y, t10)][1], this.y) || entity.get$velocityY() > t2) {
             entity.set$velocityY(0);
-            entity.y = this.y - t9;
+            entity.y = J.$sub$n(this.y, t9);
             entity.isGrounded = true;
           }
-          if ([entity.x + t7, entity.y + t10][1] > this.y + t2 || entity.get$velocityY() < t5) {
+          if (J.$gt$n([J.$add$ns(entity.x, t7), J.$add$ns(entity.y, t10)][1], J.$add$ns(this.y, t2)) || entity.get$velocityY() < t5) {
             entity.set$velocityY(0);
-            entity.y = this.y + t2;
+            entity.y = J.$add$ns(this.y, t2);
           }
         }
       }
@@ -6984,7 +7014,7 @@
   }], ["", "../main.dart",, F, {
     "^": "",
     main: [function() {
-      var t1, t2, t3, t4, t5, t6, t7, t8, crapTestLevel, game, $screen, pressedKeys;
+      var t1, t2, t3, t4, t5, t6, t7, t8, t9, crapTestLevel, game, $screen, pressedKeys;
       t1 = [0, 0];
       t2 = new G.SolidPlatform(0, 1700, 800, 50, C.Color_0_0_0_0, null);
       t3 = W.ImageElement_ImageElement(null, null, null);
@@ -6998,19 +7028,30 @@
       t5 = W.ImageElement_ImageElement(null, null, null);
       t4.sprite = t5;
       t5.src = "res/ground.png";
-      t5 = new G.SolidPlatform(2400, 1400, 400, 50, C.Color_0_0_0_0, null);
+      t5 = new N.CheckPointGrave(null, 1975, 1425, 50, 75, C.Color_0_0_0_0, null);
       t6 = W.ImageElement_ImageElement(null, null, null);
       t5.sprite = t6;
-      t6.src = "res/ground.png";
-      t6 = new O.EndBlock(3100, 1200, 50, 50, C.Color_0_0_0_0, null);
+      t6.src = "";
+      t6 = $.$get$CheckPointGrave_activatedSprite();
+      if (t6.src.length === 0) {
+        t6.src = "res/graveSprites/active.png";
+        $.$get$CheckPointGrave_inertSprite().src = "res/graveSprites/inert.png";
+      }
+      t5.sprite = $.$get$CheckPointGrave_inertSprite();
+      t5.respawnPoint = [1975, 1400];
+      t6 = new G.SolidPlatform(2400, 1400, 400, 50, C.Color_0_0_0_0, null);
       t7 = W.ImageElement_ImageElement(null, null, null);
       t6.sprite = t7;
-      t7.src = "res/rainbowSquare.png";
-      t7 = new B.Drawable(0, 0, 3200, 1800, C.Color_135_206_250_1, null);
+      t7.src = "res/ground.png";
+      t7 = new O.EndBlock(3100, 1200, 50, 50, C.Color_0_0_0_0, null);
       t8 = W.ImageElement_ImageElement(null, null, null);
       t7.sprite = t8;
-      t8.src = "";
-      crapTestLevel = new Q.Level(3200, 1800, t1, [t2, t3, t4, t5, t6], [t7], 1);
+      t8.src = "res/rainbowSquare.png";
+      t8 = new B.Drawable(0, 0, 3200, 1800, C.Color_135_206_250_1, null);
+      t9 = W.ImageElement_ImageElement(null, null, null);
+      t8.sprite = t9;
+      t9.src = "";
+      crapTestLevel = new Q.Level(3200, 1800, t1, [t2, t3, t4, t5, t6, t7], [t8], 1);
       game = new G.Game(1600, 900, 30, false, crapTestLevel, null, null);
       game.player = R.Player$(t1[0], t1[1]);
       game.entities = P.List_List$from(crapTestLevel.entities, true, null);
@@ -7034,7 +7075,15 @@
     main_closure0: {
       "^": "Closure:7;pressedKeys",
       call$1: function($event) {
-        C.JSArray_methods.remove$1(this.pressedKeys, J.get$keyCode$x($event));
+        var t1 = this.pressedKeys;
+        C.JSArray_methods.checkGrowable$1(t1, "removeWhere");
+        C.JSArray_methods._removeWhere$2(t1, new F.main__closure($event), true);
+      }
+    },
+    main__closure: {
+      "^": "Closure:2;event",
+      call$1: function(code) {
+        return J.$eq$(code, J.get$keyCode$x(this.event));
       }
     },
     main_closure1: {
@@ -7189,6 +7238,11 @@
       return receiver + a0;
     return J.getInterceptor$ns(receiver).$add(receiver, a0);
   };
+  J.$gt$n = function(receiver, a0) {
+    if (typeof receiver == "number" && typeof a0 == "number")
+      return receiver > a0;
+    return J.getInterceptor$n(receiver).$gt(receiver, a0);
+  };
   J.$index$asx = function(receiver, a0) {
     if (typeof a0 === "number")
       if (receiver.constructor == Array || typeof receiver == "string" || H.isJsIndexable(receiver, receiver[init.dispatchPropertyName]))
@@ -7201,6 +7255,16 @@
       return receiver < a0;
     return J.getInterceptor$n(receiver).$lt(receiver, a0);
   };
+  J.$mul$ns = function(receiver, a0) {
+    if (typeof receiver == "number" && typeof a0 == "number")
+      return receiver * a0;
+    return J.getInterceptor$ns(receiver).$mul(receiver, a0);
+  };
+  J.$sub$n = function(receiver, a0) {
+    if (typeof receiver == "number" && typeof a0 == "number")
+      return receiver - a0;
+    return J.getInterceptor$n(receiver).$sub(receiver, a0);
+  };
   J._addEventListener$3$x = function(receiver, a0, a1, a2) {
     return J.getInterceptor$x(receiver)._addEventListener$3(receiver, a0, a1, a2);
   };
@@ -7212,6 +7276,9 @@
   };
   J.map$1$ax = function(receiver, a0) {
     return J.getInterceptor$ax(receiver).map$1(receiver, a0);
+  };
+  J.round$0$n = function(receiver) {
+    return J.getInterceptor$n(receiver).round$0(receiver);
   };
   J.get$hashCode$ = function(receiver) {
     return J.getInterceptor(receiver).get$hashCode(receiver);
@@ -7482,7 +7549,11 @@
     return t2;
   }, "Future__nullFuture", "_toStringVisiting", "$get$_toStringVisiting", function() {
     return [];
-  }, "_toStringVisiting"]);
+  }, "_toStringVisiting", "CheckPointGrave_activatedSprite", "$get$CheckPointGrave_activatedSprite", function() {
+    return W.ImageElement_ImageElement(null, null, null);
+  }, "CheckPointGrave_activatedSprite", "CheckPointGrave_inertSprite", "$get$CheckPointGrave_inertSprite", function() {
+    return W.ImageElement_ImageElement(null, null, null);
+  }, "CheckPointGrave_inertSprite"]);
   Isolate = Isolate.$finishIsolateConstructor(Isolate);
   $ = new Isolate();
   init.metadata = [null];
