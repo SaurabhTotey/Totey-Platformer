@@ -6698,28 +6698,39 @@
     SolidPlatform: {
       "^": "Entity;x,y,w,h,bg,sprite",
       act$1: function(game) {
-        var t1, t2, t3, t4;
+        var t1, t2, t3;
         if (!B.intersect(this, game.player))
           return;
-        t1 = game.player;
-        t2 = t1.y;
-        t3 = t1.h;
-        t4 = this.y;
-        if (t2 + t3 < t4 || t2 > t4 + this.h) {
-          t2 = t1.velocityX;
-          if (t2 > 0)
-            t1.x = this.x - t1.w;
-          else if (t2 < 0)
-            t1.x = this.x + this.w;
+        t1 = game.player.center$0()[0];
+        t2 = this.x;
+        if (t1 < t2 || game.player.velocityX > this.w) {
+          t1 = game.player;
           t1.velocityX = 0;
-        } else {
-          t2 = t1.velocityY;
-          if (t2 > 0) {
-            t1.y = t4 - t3;
-            t1.isGrounded = true;
-          } else if (t2 < 0)
-            t1.y = t4 + this.h;
+          t1.x = t2 - t1.w;
+        }
+        t1 = game.player.center$0()[0];
+        t2 = this.w;
+        t3 = this.x + t2;
+        if (t1 > t3 || game.player.velocityX < -t2) {
+          t1 = game.player;
+          t1.velocityX = 0;
+          t1.x = t3;
+        }
+        t1 = game.player.center$0()[1];
+        t2 = this.y;
+        if (t1 < t2 || game.player.velocityY > this.h) {
+          t1 = game.player;
           t1.velocityY = 0;
+          t1.y = t2 - t1.h;
+          t1.isGrounded = true;
+        }
+        t1 = game.player.center$0()[1];
+        t2 = this.h;
+        t3 = this.y + t2;
+        if (t1 > t3 || game.player.velocityY < -t2) {
+          t1 = game.player;
+          t1.velocityY = 0;
+          t1.y = t3;
         }
       }
     }
@@ -6728,23 +6739,23 @@
     main: [function() {
       var t1, t2, t3, t4, t5, t6, t7, t8, crapTestLevel, game, $screen, pressedKeys;
       t1 = [0, 0];
-      t2 = new G.SolidPlatform(0, 1700, 800, 100, C.Color_0_255_0_1, null);
+      t2 = new G.SolidPlatform(0, 1700, 800, 50, C.Color_0_255_0_1, null);
       t3 = W.ImageElement_ImageElement(null, null, null);
       t2.sprite = t3;
       t3.src = "";
-      t3 = new G.SolidPlatform(800, 1600, 800, 100, C.Color_0_255_0_1, null);
+      t3 = new G.SolidPlatform(800, 1600, 800, 50, C.Color_0_255_0_1, null);
       t4 = W.ImageElement_ImageElement(null, null, null);
       t3.sprite = t4;
       t4.src = "";
-      t4 = new G.SolidPlatform(1600, 1500, 800, 100, C.Color_0_255_0_1, null);
+      t4 = new G.SolidPlatform(1600, 1500, 800, 50, C.Color_0_255_0_1, null);
       t5 = W.ImageElement_ImageElement(null, null, null);
       t4.sprite = t5;
       t5.src = "";
-      t5 = new G.SolidPlatform(2400, 1400, 400, 100, C.Color_0_255_0_1, null);
+      t5 = new G.SolidPlatform(2400, 1400, 400, 50, C.Color_0_255_0_1, null);
       t6 = W.ImageElement_ImageElement(null, null, null);
       t5.sprite = t6;
       t6.src = "";
-      t6 = new O.EndBlock(3150, 1200, 50, 50, C.Color_255_255_255_1, null);
+      t6 = new O.EndBlock(3100, 1200, 50, 50, C.Color_255_255_255_1, null);
       t7 = W.ImageElement_ImageElement(null, null, null);
       t6.sprite = t7;
       t7.src = "";

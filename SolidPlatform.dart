@@ -20,21 +20,22 @@ class SolidPlatform extends Entity {
         if (!intersect(this, game.player)) {
             return;
         }
-        if (game.player.y + game.player.h < this.y || game.player.y > this.y + this.h) {
-            if (game.player.velocityX > 0) {
-                game.player.x = this.x - game.player.w;
-            } else if (game.player.velocityX < 0) {
-                game.player.x = this.x + this.w;
-            }
+        if (game.player.center()[0] < this.x || game.player.velocityX > this.w) {
             game.player.velocityX = 0.0;
-        } else {
-            if (game.player.velocityY > 0) {
-                game.player.y = this.y - game.player.h;
-                game.player.isGrounded = true;
-            } else if (game.player.velocityY < 0) {
-                game.player.y = this.y + this.h;
-            }
+            game.player.x = this.x - game.player.w;
+        }
+        if (game.player.center()[0] > this.x + this.w || game.player.velocityX < -this.w) {
+            game.player.velocityX = 0.0;
+            game.player.x = this.x + this.w;
+        }
+        if (game.player.center()[1] < this.y || game.player.velocityY > this.h) {
             game.player.velocityY = 0.0;
+            game.player.y = this.y - game.player.h;
+            game.player.isGrounded = true;
+        }
+        if (game.player.center()[1] > this.y + this.h || game.player.velocityY < -this.h) {
+            game.player.velocityY = 0.0;
+            game.player.y = this.y + this.h;
         }
     }
 
