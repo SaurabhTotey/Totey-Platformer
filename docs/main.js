@@ -6098,7 +6098,7 @@
       "^": "Interceptor;",
       $isEvent: 1,
       $isObject: 1,
-      "%": "AnimationEvent|AnimationPlayerEvent|ApplicationCacheErrorEvent|AudioProcessingEvent|AutocompleteErrorEvent|BeforeInstallPromptEvent|BeforeUnloadEvent|BlobEvent|ClipboardEvent|CloseEvent|CompositionEvent|CustomEvent|DeviceLightEvent|DeviceMotionEvent|DeviceOrientationEvent|DragEvent|ExtendableEvent|ExtendableMessageEvent|FetchEvent|FocusEvent|FontFaceSetLoadEvent|GamepadEvent|GeofencingEvent|HashChangeEvent|IDBVersionChangeEvent|InstallEvent|KeyboardEvent|MIDIConnectionEvent|MIDIMessageEvent|MediaEncryptedEvent|MediaKeyMessageEvent|MediaQueryListEvent|MediaStreamEvent|MediaStreamTrackEvent|MessageEvent|MouseEvent|NotificationEvent|OfflineAudioCompletionEvent|PageTransitionEvent|PointerEvent|PopStateEvent|PresentationConnectionAvailableEvent|PresentationConnectionCloseEvent|ProgressEvent|PromiseRejectionEvent|PushEvent|RTCDTMFToneChangeEvent|RTCDataChannelEvent|RTCIceCandidateEvent|RTCPeerConnectionIceEvent|RelatedEvent|ResourceProgressEvent|SVGZoomEvent|SecurityPolicyViolationEvent|ServicePortConnectEvent|ServiceWorkerMessageEvent|SpeechRecognitionEvent|SpeechSynthesisEvent|StorageEvent|SyncEvent|TextEvent|TouchEvent|TrackEvent|TransitionEvent|UIEvent|USBConnectionEvent|WebGLContextEvent|WebKitTransitionEvent|WheelEvent;Event|InputEvent"
+      "%": "AnimationEvent|AnimationPlayerEvent|ApplicationCacheErrorEvent|AudioProcessingEvent|AutocompleteErrorEvent|BeforeInstallPromptEvent|BeforeUnloadEvent|BlobEvent|ClipboardEvent|CloseEvent|CustomEvent|DeviceLightEvent|DeviceMotionEvent|DeviceOrientationEvent|ExtendableEvent|ExtendableMessageEvent|FetchEvent|FontFaceSetLoadEvent|GamepadEvent|GeofencingEvent|HashChangeEvent|IDBVersionChangeEvent|InstallEvent|MIDIConnectionEvent|MIDIMessageEvent|MediaEncryptedEvent|MediaKeyMessageEvent|MediaQueryListEvent|MediaStreamEvent|MediaStreamTrackEvent|MessageEvent|NotificationEvent|OfflineAudioCompletionEvent|PageTransitionEvent|PopStateEvent|PresentationConnectionAvailableEvent|PresentationConnectionCloseEvent|ProgressEvent|PromiseRejectionEvent|PushEvent|RTCDTMFToneChangeEvent|RTCDataChannelEvent|RTCIceCandidateEvent|RTCPeerConnectionIceEvent|RelatedEvent|ResourceProgressEvent|SecurityPolicyViolationEvent|ServicePortConnectEvent|ServiceWorkerMessageEvent|SpeechRecognitionEvent|SpeechSynthesisEvent|StorageEvent|SyncEvent|TrackEvent|TransitionEvent|USBConnectionEvent|WebGLContextEvent|WebKitTransitionEvent;Event|InputEvent"
     },
     EventTarget: {
       "^": "Interceptor;",
@@ -6118,6 +6118,13 @@
       "^": "HtmlElement;",
       $isInterceptor: 1,
       "%": "HTMLInputElement"
+    },
+    KeyboardEvent: {
+      "^": "UIEvent;keyCode=",
+      $isKeyboardEvent: 1,
+      $isEvent: 1,
+      $isObject: 1,
+      "%": "KeyboardEvent"
     },
     MediaElement: {
       "^": "HtmlElement;error=",
@@ -6143,6 +6150,10 @@
     SpeechRecognitionError: {
       "^": "Event;error=",
       "%": "SpeechRecognitionError"
+    },
+    UIEvent: {
+      "^": "Event;",
+      "%": "CompositionEvent|DragEvent|FocusEvent|MouseEvent|PointerEvent|SVGZoomEvent|TextEvent|TouchEvent|WheelEvent;UIEvent"
     },
     Window: {
       "^": "EventTarget;",
@@ -6494,7 +6505,9 @@
     Game: {
       "^": "Object;width,height,ticksPerSecond,isFinished,level,player,entities",
       update$0: function() {
-        this.player.act$1(this);
+        var t1 = this.player;
+        t1.super$MovableEntity$act(this);
+        t1.velocityX = 0;
         C.JSArray_methods.forEach$1(this.entities, new G.Game_update_closure(this));
       }
     },
@@ -6513,19 +6526,23 @@
     "^": "",
     MovableEntity: {
       "^": "Entity;",
-      act$1: function(game) {
+      act$1: ["super$MovableEntity$act", function(game) {
         var t1, t2;
         this.x = C.JSInt_methods.round$0(this.x + this.velocityX);
         t1 = this.y;
         t2 = this.velocityY;
         this.y = C.JSInt_methods.round$0(t1 + t2);
         this.velocityY = t2 + game.level.gravity;
-      }
+      }]
     }
   }], ["", "../Player.dart",, R, {
     "^": "",
     Player: {
-      "^": "MovableEntity;velocityX,velocityY,x,y,w,h,bg,sprite"
+      "^": "MovableEntity;velocityX,velocityY,x,y,w,h,bg,sprite",
+      act$1: function(game) {
+        this.super$MovableEntity$act(game);
+        this.velocityX = 0;
+      }
     }
   }], ["", "../Screen.dart",, D, {
     "^": "",
@@ -6666,12 +6683,18 @@
         t3 = t1.h;
         t4 = this.y;
         if (t2 + t3 < t4 || t2 > t4 + this.h) {
-          if (t1.velocityX > 0)
+          t2 = t1.velocityX;
+          if (t2 > 0)
             t1.x = this.x - t1.w;
+          else if (t2 < 0)
+            t1.x = this.x + this.w;
           t1.velocityX = 0;
         } else {
-          if (t1.velocityY > 0)
+          t2 = t1.velocityY;
+          if (t2 > 0)
             t1.y = t4 - t3;
+          else if (t2 < 0)
+            t1.y = t4 + this.h;
           t1.velocityY = 0;
         }
       }
@@ -6679,33 +6702,69 @@
   }], ["", "../main.dart",, F, {
     "^": "",
     main: [function() {
-      var t1, t2, t3, t4, t5, crapTestLevel, game, $screen;
+      var t1, t2, t3, t4, t5, t6, t7, t8, crapTestLevel, game, $screen;
       t1 = [0, 0];
-      t2 = new G.SolidPlatform(0, 800, 800, 100, C.Color_0_255_0_1, null);
+      t2 = new G.SolidPlatform(0, 1700, 800, 100, C.Color_0_255_0_1, null);
       t3 = W.ImageElement_ImageElement(null, null, null);
       t2.sprite = t3;
       t3.src = "";
-      t3 = new O.EndBlock(900, 750, 50, 50, C.Color_255_255_255_1, null);
+      t3 = new G.SolidPlatform(800, 1600, 800, 100, C.Color_0_255_0_1, null);
       t4 = W.ImageElement_ImageElement(null, null, null);
       t3.sprite = t4;
       t4.src = "";
-      t4 = new B.Drawable(0, 0, 1600, 900, C.Color_135_206_250_1, null);
+      t4 = new G.SolidPlatform(1600, 1500, 800, 100, C.Color_0_255_0_1, null);
       t5 = W.ImageElement_ImageElement(null, null, null);
       t4.sprite = t5;
       t5.src = "";
-      crapTestLevel = new Q.Level(1600, 900, t1, [t2, t3], [t4], 1);
+      t5 = new G.SolidPlatform(2400, 1400, 400, 100, C.Color_0_255_0_1, null);
+      t6 = W.ImageElement_ImageElement(null, null, null);
+      t5.sprite = t6;
+      t6.src = "";
+      t6 = new O.EndBlock(3150, 1200, 50, 50, C.Color_255_255_255_1, null);
+      t7 = W.ImageElement_ImageElement(null, null, null);
+      t6.sprite = t7;
+      t7.src = "";
+      t7 = new B.Drawable(0, 0, 3200, 1800, C.Color_135_206_250_1, null);
+      t8 = W.ImageElement_ImageElement(null, null, null);
+      t7.sprite = t8;
+      t8.src = "";
+      crapTestLevel = new Q.Level(3200, 1800, t1, [t2, t3, t4, t5, t6], [t7], 1);
       game = new G.Game(1600, 900, 30, false, crapTestLevel, null, null);
       t1 = new R.Player(0, 0, t1[0], t1[1], 50, 100, C.Color_255_100_100_1, null);
-      t4 = W.ImageElement_ImageElement(null, null, null);
-      t1.sprite = t4;
-      t4.src = "";
+      t7 = W.ImageElement_ImageElement(null, null, null);
+      t1.sprite = t7;
+      t7.src = "";
       game.player = t1;
       game.entities = P.List_List$from(crapTestLevel.entities, true, null);
       $screen = D.Screen$(game);
-      P.Timer_Timer$periodic(P.Duration$(0, 0, 0, 33, 0, 0), new F.main_closure(game));
-      P.Timer_Timer$periodic(P.Duration$(0, 0, 0, C.JSDouble_methods.round$0(1000 / $screen.framesPerSecond), 0, 0), new F.main_closure0(game, $screen));
+      W._EventStreamSubscription$(window, "keydown", new F.main_closure(game), false, W.KeyboardEvent);
+      P.Timer_Timer$periodic(P.Duration$(0, 0, 0, 33, 0, 0), new F.main_closure0(game));
+      P.Timer_Timer$periodic(P.Duration$(0, 0, 0, C.JSDouble_methods.round$0(1000 / $screen.framesPerSecond), 0, 0), new F.main_closure1(game, $screen));
     }, "call$0", "main__main$closure", 0, 0, 1],
     main_closure: {
+      "^": "Closure:14;game",
+      call$1: function($event) {
+        var t1;
+        switch (J.get$keyCode$x($event)) {
+          case 87:
+            t1 = this.game.player;
+            if (t1.velocityY === 0)
+              t1.velocityY = -5;
+            break;
+          case 65:
+            this.game.player.velocityX = -15;
+            break;
+          case 83:
+            break;
+          case 68:
+            this.game.player.velocityX = 15;
+            break;
+          default:
+            break;
+        }
+      }
+    },
+    main_closure0: {
       "^": "Closure:5;game",
       call$1: function(t) {
         var t1 = this.game;
@@ -6714,7 +6773,7 @@
           t.cancel$0();
       }
     },
-    main_closure0: {
+    main_closure1: {
       "^": "Closure:5;game,screen",
       call$1: function(t) {
         this.screen.update$0();
@@ -6815,6 +6874,9 @@
   };
   J.get$iterator$ax = function(receiver) {
     return J.getInterceptor$ax(receiver).get$iterator(receiver);
+  };
+  J.get$keyCode$x = function(receiver) {
+    return J.getInterceptor$x(receiver).get$keyCode(receiver);
   };
   J.get$length$asx = function(receiver) {
     return J.getInterceptor$asx(receiver).get$length(receiver);
@@ -7125,7 +7187,7 @@
   Isolate = Isolate.$finishIsolateConstructor(Isolate);
   $ = new Isolate();
   init.metadata = [null];
-  init.types = [{func: 1}, {func: 1, v: true}, {func: 1, args: [,]}, {func: 1, v: true, args: [{func: 1, v: true}]}, {func: 1, ret: P.String, args: [P.int]}, {func: 1, args: [P.Timer]}, {func: 1, args: [, P.String]}, {func: 1, args: [P.String]}, {func: 1, args: [{func: 1, v: true}]}, {func: 1, v: true, args: [P.Object], opt: [P.StackTrace]}, {func: 1, args: [,], opt: [,]}, {func: 1, v: true, args: [, P.StackTrace]}, {func: 1, args: [,,]}, {func: 1, v: true, opt: [W.Event]}];
+  init.types = [{func: 1}, {func: 1, v: true}, {func: 1, args: [,]}, {func: 1, v: true, args: [{func: 1, v: true}]}, {func: 1, ret: P.String, args: [P.int]}, {func: 1, args: [P.Timer]}, {func: 1, args: [, P.String]}, {func: 1, args: [P.String]}, {func: 1, args: [{func: 1, v: true}]}, {func: 1, v: true, args: [P.Object], opt: [P.StackTrace]}, {func: 1, args: [,], opt: [,]}, {func: 1, v: true, args: [, P.StackTrace]}, {func: 1, args: [,,]}, {func: 1, v: true, opt: [W.Event]}, {func: 1, args: [W.KeyboardEvent]}];
   function convertToFastObject(properties) {
     function MyClass() {
     }
