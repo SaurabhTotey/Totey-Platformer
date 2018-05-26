@@ -37,6 +37,12 @@ class Game {
     void update() {
         this.player.act(this);
         this.entities.forEach((entity) => entity.act(this));
+        if (this.player.y > this.level.height) {
+            this.player.loseLife();
+        }
+        if (this.player.lives <= 0) {
+            this.isFinished = true;
+        }
     }
 
 }

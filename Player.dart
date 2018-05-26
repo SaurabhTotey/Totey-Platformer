@@ -7,6 +7,10 @@ import 'MovableEntity.dart';
  */
 class Player extends MovableEntity {
 
+    int maxLives = 3;
+    int lives = 2;
+    List<int> lastCheckPoint;
+
     ImageElement standingSprite = new ImageElement();
     ImageElement jumpingSprite = new ImageElement();
     ImageElement fallingSprites = new ImageElement();
@@ -25,6 +29,7 @@ class Player extends MovableEntity {
             this.leftSprites[i].src = "res/playerSprites/left${i + 1}.png";
         }
         this.sprite = this.standingSprite;
+        this.lastCheckPoint = [x, y];
     }
 
     /**
@@ -57,6 +62,29 @@ class Player extends MovableEntity {
                 this.velocityX = 0.0;
             }
         }
+        if (this.x < 0) {
+            this.x = 0;
+        }
+        if (this.x + this.w > game.level.width) {
+            this.x = game.level.width - this.w;
+        }
+        if (this.y < 0) {
+            this.y = 0;
+        }
+    }
+
+    /**
+     * What happens when the player loses a life
+     */
+    void loseLife() {
+        this.lives--;
+        if (this.lives <= 0) {
+            return;
+        }
+        this.x = lastCheckPoint[0];
+        this.y = lastCheckPoint[1];
+        this.velocityX = 0.0;
+        this.velocityY = 0.0;
     }
 
 }

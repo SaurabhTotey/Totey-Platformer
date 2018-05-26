@@ -1,4 +1,5 @@
 import 'dart:html';
+import 'dart:math';
 import 'Drawable.dart';
 import 'Game.dart';
 
@@ -17,6 +18,8 @@ class Screen {
     final framesPerSecond = 60;
     //The game that the screen will be drawing
     Game game;
+    //Sprite for showing number of lives
+    ImageElement livesSprite = new ImageElement();
 
     /**
      * Constructor for a screen
@@ -40,6 +43,7 @@ class Screen {
         };
         resizeProc();
         window.onResize.listen(resizeProc);
+        this.livesSprite.src = "res/heart.png";
     }
 
     /**
@@ -81,6 +85,11 @@ class Screen {
                 this.renderer.drawImageToRect(obj.sprite, new Rectangle((obj.x - logicalX) * stretchX, (obj.y - logicalY) * stretchY, obj.w * stretchX, obj.h * stretchY));
             }
         }
+        //Draws player lives
+        this.renderer.fillStyle = "red";
+        this.renderer.font = "${0.05 * sqrt(pow(this.screen.width, 2) + pow(this.screen.height, 2))}px Arial";
+        this.renderer.fillText("${game.player.lives}x", 0, 0.05 * this.screen.width, 0.05 * this.screen.width);
+        this.renderer.drawImageToRect(this.livesSprite, new Rectangle(0.05 * this.screen.width, 0, 0.05 * this.screen.width, 0.05 * this.screen.width));
     }
 
 }
