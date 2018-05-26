@@ -1,6 +1,7 @@
 import 'Drawable.dart';
 import 'Entity.dart';
 import 'Game.dart';
+import 'MovableEntity.dart';
 
 /**
  * A class that represents a platform that is solid and collides on all sides
@@ -17,25 +18,29 @@ class SolidPlatform extends Entity {
      * SolidPlatforms are solid on all sides and prevent players from going through them
      */
     void act(Game game) {
-        if (!intersect(this, game.player)) {
-            return;
-        }
-        if (game.player.center()[0] < this.x || game.player.velocityX > this.w) {
-            game.player.velocityX = 0.0;
-            game.player.x = this.x - game.player.w;
-        }
-        if (game.player.center()[0] > this.x + this.w || game.player.velocityX < -this.w) {
-            game.player.velocityX = 0.0;
-            game.player.x = this.x + this.w;
-        }
-        if (game.player.center()[1] < this.y || game.player.velocityY > this.h) {
-            game.player.velocityY = 0.0;
-            game.player.y = this.y - game.player.h;
-            game.player.isGrounded = true;
-        }
-        if (game.player.center()[1] > this.y + this.h || game.player.velocityY < -this.h) {
-            game.player.velocityY = 0.0;
-            game.player.y = this.y + this.h;
+        List<MovableEntity> movables = game.entities.where((Entity e) => e is MovableEntity).toList();
+        movables.add(game.player);
+        for (final entity in movables) {
+            if (!intersect(this, entity)) {
+                continue;
+            }
+            if (entity.center()[0] < this.x || entity.velocityX > this.w) {
+                entity.velocityX = 0.0;
+                entity.x = this.x - entity.w;
+            }
+            if (entity.center()[0] > this.x + this.w || entity.velocityX < -this.w) {
+                entity.velocityX = 0.0;
+                entity.x = this.x + this.w;
+            }
+            if (entity.center()[1] < this.y || entity.velocityY > this.h) {
+                entity.velocityY = 0.0;
+                entity.y = this.y - entity.h;
+                entity.isGrounded = true;
+            }
+            if (entity.center()[1] > this.y + this.h || entity.velocityY < -this.h) {
+                entity.velocityY = 0.0;
+                entity.y = this.y + this.h;
+            }
         }
     }
 

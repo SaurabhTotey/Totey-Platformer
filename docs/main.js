@@ -1023,6 +1023,28 @@
         return [$T];
       }
     },
+    WhereIterable: {
+      "^": "Iterable;_iterable,_f,$ti",
+      get$iterator: function(_) {
+        return new H.WhereIterator(J.get$iterator$ax(this._iterable), this._f, this.$ti);
+      },
+      map$1: function(_, f) {
+        return new H.MappedIterable(this, f, [H.getTypeArgumentByIndex(this, 0), null]);
+      }
+    },
+    WhereIterator: {
+      "^": "Iterator;_iterator,_f,$ti",
+      moveNext$0: function() {
+        var t1, t2;
+        for (t1 = this._iterator, t2 = this._f; t1.moveNext$0();)
+          if (t2.call$1(t1.get$current()) === true)
+            return true;
+        return false;
+      },
+      get$current: function() {
+        return this._iterator.get$current();
+      }
+    },
     FixedLengthListMixin: {
       "^": "Object;$ti"
     }
@@ -6483,11 +6505,14 @@
   }], ["", "../Drawable.dart",, B, {
     "^": "",
     intersect: function(first, second) {
-      var t1, t2;
+      var t1, t2, t3;
       t1 = first.x;
-      t2 = second.x;
-      if (t1 < t2 + second.w)
-        if (t1 + first.w > t2) {
+      t2 = J.get$x$x(second);
+      t3 = second.get$w();
+      if (typeof t2 !== "number")
+        return t2.$add();
+      if (t1 < t2 + t3)
+        if (first.x + first.w > second.x) {
           t1 = first.y;
           t2 = second.y;
           t1 = t1 < t2 + second.h && t1 + first.h > t2;
@@ -6546,7 +6571,7 @@
   }], ["", "../MovableEntity.dart",, R, {
     "^": "",
     MovableEntity: {
-      "^": "Entity;",
+      "^": "Entity;velocityX@,velocityY@,isGrounded,x,y,w,h,bg,sprite",
       act$1: ["super$MovableEntity$act", function(game) {
         var t1, t2;
         this.x = C.JSInt_methods.round$0(this.x + this.velocityX);
@@ -6559,7 +6584,7 @@
   }], ["", "../Player.dart",, R, {
     "^": "",
     Player: {
-      "^": "MovableEntity;isGrounded,velocityX,velocityY,x,y,w,h,bg,sprite",
+      "^": "MovableEntity;velocityX,velocityY,isGrounded,x,y,w,h,bg,sprite",
       act$1: function(game) {
         if (this.velocityY !== 0)
           this.isGrounded = false;
@@ -6698,40 +6723,44 @@
     SolidPlatform: {
       "^": "Entity;x,y,w,h,bg,sprite",
       act$1: function(game) {
-        var t1, t2, t3;
-        if (!B.intersect(this, game.player))
-          return;
-        t1 = game.player.center$0()[0];
-        t2 = this.x;
-        if (t1 < t2 || game.player.velocityX > this.w) {
-          t1 = game.player;
-          t1.velocityX = 0;
-          t1.x = t2 - t1.w;
+        var t1, t2, movables, t3, t4, t5, _i, entity, t6, t7, t8, t9, t10;
+        t1 = game.entities;
+        t2 = H.getTypeArgumentByIndex(t1, 0);
+        movables = P.List_List$from(new H.WhereIterable(t1, new G.SolidPlatform_act_closure(), [t2]), true, t2);
+        C.JSArray_methods.add$1(movables, game.player);
+        for (t1 = movables.length, t2 = this.h, t3 = this.w, t4 = -t3, t5 = -t2, _i = 0; _i < movables.length; movables.length === t1 || (0, H.throwConcurrentModificationError)(movables), ++_i) {
+          entity = movables[_i];
+          if (!B.intersect(this, entity))
+            continue;
+          if (entity.center$0()[0] < this.x || entity.get$velocityX() > t3) {
+            entity.set$velocityX(0);
+            entity.x = this.x - entity.w;
+          }
+          t6 = entity.x;
+          t7 = entity.w / 2;
+          t8 = entity.y;
+          t9 = entity.h;
+          t10 = t9 / 2;
+          if ([t6 + t7, t8 + t10][0] > this.x + t3 || entity.get$velocityX() < t4) {
+            entity.set$velocityX(0);
+            entity.x = this.x + t3;
+          }
+          if ([entity.x + t7, entity.y + t10][1] < this.y || entity.get$velocityY() > t2) {
+            entity.set$velocityY(0);
+            entity.y = this.y - t9;
+            entity.isGrounded = true;
+          }
+          if ([entity.x + t7, entity.y + t10][1] > this.y + t2 || entity.get$velocityY() < t5) {
+            entity.set$velocityY(0);
+            entity.y = this.y + t2;
+          }
         }
-        t1 = game.player.center$0()[0];
-        t2 = this.w;
-        t3 = this.x + t2;
-        if (t1 > t3 || game.player.velocityX < -t2) {
-          t1 = game.player;
-          t1.velocityX = 0;
-          t1.x = t3;
-        }
-        t1 = game.player.center$0()[1];
-        t2 = this.y;
-        if (t1 < t2 || game.player.velocityY > this.h) {
-          t1 = game.player;
-          t1.velocityY = 0;
-          t1.y = t2 - t1.h;
-          t1.isGrounded = true;
-        }
-        t1 = game.player.center$0()[1];
-        t2 = this.h;
-        t3 = this.y + t2;
-        if (t1 > t3 || game.player.velocityY < -t2) {
-          t1 = game.player;
-          t1.velocityY = 0;
-          t1.y = t3;
-        }
+      }
+    },
+    SolidPlatform_act_closure: {
+      "^": "Closure:15;",
+      call$1: function(e) {
+        return e instanceof R.MovableEntity;
       }
     }
   }], ["", "../main.dart",, F, {
@@ -6765,7 +6794,7 @@
       t8.src = "";
       crapTestLevel = new Q.Level(3200, 1800, t1, [t2, t3, t4, t5, t6], [t7], 1);
       game = new G.Game(1600, 900, 30, false, crapTestLevel, null, null);
-      t1 = new R.Player(false, 0, 0, t1[0], t1[1], 50, 100, C.Color_255_100_100_1, null);
+      t1 = new R.Player(0, 0, false, t1[0], t1[1], 50, 100, C.Color_255_100_100_1, null);
       t7 = W.ImageElement_ImageElement(null, null, null);
       t1.sprite = t7;
       t7.src = "";
@@ -7241,7 +7270,7 @@
   Isolate = Isolate.$finishIsolateConstructor(Isolate);
   $ = new Isolate();
   init.metadata = [null];
-  init.types = [{func: 1}, {func: 1, v: true}, {func: 1, args: [,]}, {func: 1, args: [P.Timer]}, {func: 1, v: true, args: [{func: 1, v: true}]}, {func: 1, ret: P.String, args: [P.int]}, {func: 1, args: [W.KeyEvent]}, {func: 1, args: [, P.String]}, {func: 1, args: [P.String]}, {func: 1, args: [{func: 1, v: true}]}, {func: 1, v: true, args: [P.Object], opt: [P.StackTrace]}, {func: 1, args: [,], opt: [,]}, {func: 1, v: true, args: [, P.StackTrace]}, {func: 1, args: [,,]}, {func: 1, v: true, opt: [W.Event]}];
+  init.types = [{func: 1}, {func: 1, v: true}, {func: 1, args: [,]}, {func: 1, args: [P.Timer]}, {func: 1, v: true, args: [{func: 1, v: true}]}, {func: 1, ret: P.String, args: [P.int]}, {func: 1, args: [W.KeyEvent]}, {func: 1, args: [, P.String]}, {func: 1, args: [P.String]}, {func: 1, args: [{func: 1, v: true}]}, {func: 1, v: true, args: [P.Object], opt: [P.StackTrace]}, {func: 1, args: [,], opt: [,]}, {func: 1, v: true, args: [, P.StackTrace]}, {func: 1, args: [,,]}, {func: 1, v: true, opt: [W.Event]}, {func: 1, args: [O.Entity]}];
   function convertToFastObject(properties) {
     function MyClass() {
     }

@@ -7,9 +7,6 @@ import 'MovableEntity.dart';
  */
 class Player extends MovableEntity {
 
-    //The state of whether the player is on the ground or not: controls whether it can jump or not
-    bool isGrounded = false;
-
     /**
      * Makes a player given its starting position; players are always 50 wide and 100 tall
      */

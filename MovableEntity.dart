@@ -12,6 +12,8 @@ class MovableEntity extends Entity {
     double velocityX;
     //The y component of the entity's velocity
     double velocityY;
+    //Whether the entity is on the ground or not
+    bool isGrounded = false;
 
     /**
      * Makes an entity given its starting position and velocity
