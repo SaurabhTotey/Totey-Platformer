@@ -19,26 +19,38 @@ void main() {
     Screen screen = new Screen(game);
 
     //Binds keys to game functions
-    window.onKeyDown.listen((KeyboardEvent event) {
-        switch (event.keyCode) {
-            case KeyCode.W: {
-                if (game.player.velocityY == 0) {
-                    game.player.velocityY = -5.0;
+    List<int> pressedKeys = [];
+    window.onKeyDown.listen((KeyEvent event) {
+        if (!pressedKeys.contains(event.keyCode)) {
+            pressedKeys.add(event.keyCode);
+        }
+    });
+    window.onKeyUp.listen((KeyEvent event) {
+        pressedKeys.remove(event.keyCode);
+    });
+    //Times key handling to happen periodically
+    new Timer.periodic(new Duration(milliseconds: (1000 / 20).round()), (Timer t) {
+        for (final keyCode in pressedKeys) {
+            switch (keyCode) {
+                case KeyCode.W: {
+                    if (game.player.velocityY == 0) {
+                        game.player.velocityY = -15.0;
+                    }
+                    break;
                 }
-                break;
+                case KeyCode.A: {
+                    game.player.velocityX = -15.0;
+                    break;
+                }
+                case KeyCode.S: {
+                    break;
+                }
+                case KeyCode.D: {
+                    game.player.velocityX = 15.0;
+                    break;
+                }
+                default: break;
             }
-            case KeyCode.A: {
-                game.player.velocityX = -15.0;
-                break;
-            }
-            case KeyCode.S: {
-                break;
-            }
-            case KeyCode.D: {
-                game.player.velocityX = 15.0;
-                break;
-            }
-            default: break;
         }
     });
 

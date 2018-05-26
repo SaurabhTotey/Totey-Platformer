@@ -650,6 +650,16 @@
         this.checkGrowable$1(receiver, "add");
         receiver.push(value);
       },
+      remove$1: function(receiver, element) {
+        var i;
+        this.checkGrowable$1(receiver, "remove");
+        for (i = 0; i < receiver.length; ++i)
+          if (J.$eq$(receiver[i], element)) {
+            receiver.splice(i, 1);
+            return true;
+          }
+        return false;
+      },
       addAll$1: function(receiver, collection) {
         var t1, _i;
         this.checkGrowable$1(receiver, "addAll");
@@ -703,6 +713,13 @@
               return H.ioore(iterable, t1);
             receiver[start + i] = iterable[t1];
           }
+      },
+      contains$1: function(receiver, other) {
+        var i;
+        for (i = 0; i < receiver.length; ++i)
+          if (J.$eq$(receiver[i], other))
+            return true;
+        return false;
       },
       toString$0: function(receiver) {
         return P.IterableBase_iterableToFullString(receiver, "[", "]");
@@ -3530,13 +3547,13 @@
       }
     },
     initHooks_closure0: {
-      "^": "Closure:6;getUnknownTag",
+      "^": "Closure:7;getUnknownTag",
       call$2: function(o, tag) {
         return this.getUnknownTag(o, tag);
       }
     },
     initHooks_closure1: {
-      "^": "Closure:7;prototypeForTag",
+      "^": "Closure:8;prototypeForTag",
       call$1: function(tag) {
         return this.prototypeForTag(tag);
       }
@@ -3835,14 +3852,14 @@
     _AsyncRun__scheduleImmediateJsOverride: [function(callback) {
       ++init.globalState.topEventLoop._activeJsAsyncCount;
       self.scheduleImmediate(H.convertDartClosureToJS(new P._AsyncRun__scheduleImmediateJsOverride_internalCallback(callback), 0));
-    }, "call$1", "async__AsyncRun__scheduleImmediateJsOverride$closure", 2, 0, 3],
+    }, "call$1", "async__AsyncRun__scheduleImmediateJsOverride$closure", 2, 0, 4],
     _AsyncRun__scheduleImmediateWithSetImmediate: [function(callback) {
       ++init.globalState.topEventLoop._activeJsAsyncCount;
       self.setImmediate(H.convertDartClosureToJS(new P._AsyncRun__scheduleImmediateWithSetImmediate_internalCallback(callback), 0));
-    }, "call$1", "async__AsyncRun__scheduleImmediateWithSetImmediate$closure", 2, 0, 3],
+    }, "call$1", "async__AsyncRun__scheduleImmediateWithSetImmediate$closure", 2, 0, 4],
     _AsyncRun__scheduleImmediateWithTimer: [function(callback) {
       P.Timer__createTimer(C.Duration_0, callback);
-    }, "call$1", "async__AsyncRun__scheduleImmediateWithTimer$closure", 2, 0, 3],
+    }, "call$1", "async__AsyncRun__scheduleImmediateWithTimer$closure", 2, 0, 4],
     _registerErrorHandler: function(errorHandler, zone) {
       if (H.functionTypeTest(errorHandler, {func: 1, args: [P.Null, P.Null]})) {
         zone.toString;
@@ -4016,7 +4033,7 @@
       }
     },
     _AsyncRun__initializeScheduleImmediate_closure: {
-      "^": "Closure:8;_box_0,div,span",
+      "^": "Closure:9;_box_0,div,span",
       call$1: function(callback) {
         var t1, t2;
         ++init.globalState.topEventLoop._activeJsAsyncCount;
@@ -4195,7 +4212,7 @@
         P._Future__propagateToListeners(this, listeners);
       }, function(error) {
         return this._completeError$2(error, null);
-      }, "_completeError$1", "call$2", "call$1", "get$_completeError", 2, 2, 9, 0],
+      }, "_completeError$1", "call$2", "call$1", "get$_completeError", 2, 2, 10, 0],
       _Future$value$1: function(value, $T) {
         this._state = 4;
         this._resultOrListeners = value;
@@ -4349,7 +4366,7 @@
       }
     },
     _Future__chainForeignFuture_closure0: {
-      "^": "Closure:10;target",
+      "^": "Closure:11;target",
       call$2: function(error, stackTrace) {
         this.target._completeError$2(error, stackTrace);
       },
@@ -4882,7 +4899,7 @@
       }],
       _handleError$2: [function(error, stackTrace) {
         this._stream._handleError$3(error, stackTrace, this);
-      }, "call$2", "get$_handleError", 4, 0, 11],
+      }, "call$2", "get$_handleError", 4, 0, 12],
       _handleDone$0: [function() {
         this._async$_close$0();
       }, "call$0", "get$_handleDone", 0, 0, 1],
@@ -5482,7 +5499,7 @@
       $asEfficientLengthIterable: null
     },
     Maps_mapToString_closure: {
-      "^": "Closure:12;_box_0,result",
+      "^": "Closure:13;_box_0,result",
       call$2: function(k, v) {
         var t1, t2;
         t1 = this._box_0;
@@ -5709,7 +5726,7 @@
       }
     },
     Duration_toString_sixDigits: {
-      "^": "Closure:4;",
+      "^": "Closure:5;",
       call$1: function(n) {
         if (n >= 100000)
           return "" + n;
@@ -5725,7 +5742,7 @@
       }
     },
     Duration_toString_twoDigits: {
-      "^": "Closure:4;",
+      "^": "Closure:5;",
       call$1: function(n) {
         if (n >= 10)
           return "" + n;
@@ -6121,9 +6138,6 @@
     },
     KeyboardEvent: {
       "^": "UIEvent;keyCode=",
-      $isKeyboardEvent: 1,
-      $isEvent: 1,
-      $isObject: 1,
       "%": "KeyboardEvent"
     },
     MediaElement: {
@@ -6243,6 +6257,15 @@
       call$1: function(e) {
         return this.onData.call$1(e);
       }
+    },
+    KeyEvent: {
+      "^": "_WrappedEvent;",
+      $isEvent: 1,
+      $isInterceptor: 1
+    },
+    _WrappedEvent: {
+      "^": "Object;",
+      $isInterceptor: 1
     }
   }], ["dart.dom.indexed_db", "dart:indexed_db",, P, {
     "^": ""
@@ -6637,7 +6660,7 @@
       }
     },
     Screen_resizeProc: {
-      "^": "Closure:13;$this",
+      "^": "Closure:14;$this",
       call$1: function(resizeEvent) {
         var t1, t2, t3, t4, t5, t6;
         t1 = window.innerWidth;
@@ -6702,7 +6725,7 @@
   }], ["", "../main.dart",, F, {
     "^": "",
     main: [function() {
-      var t1, t2, t3, t4, t5, t6, t7, t8, crapTestLevel, game, $screen;
+      var t1, t2, t3, t4, t5, t6, t7, t8, crapTestLevel, game, $screen, pressedKeys;
       t1 = [0, 0];
       t2 = new G.SolidPlatform(0, 1700, 800, 100, C.Color_0_255_0_1, null);
       t3 = W.ImageElement_ImageElement(null, null, null);
@@ -6737,35 +6760,54 @@
       game.player = t1;
       game.entities = P.List_List$from(crapTestLevel.entities, true, null);
       $screen = D.Screen$(game);
-      W._EventStreamSubscription$(window, "keydown", new F.main_closure(game), false, W.KeyboardEvent);
-      P.Timer_Timer$periodic(P.Duration$(0, 0, 0, 33, 0, 0), new F.main_closure0(game));
-      P.Timer_Timer$periodic(P.Duration$(0, 0, 0, C.JSDouble_methods.round$0(1000 / $screen.framesPerSecond), 0, 0), new F.main_closure1(game, $screen));
+      pressedKeys = [];
+      t1 = W.KeyboardEvent;
+      W._EventStreamSubscription$(window, "keydown", new F.main_closure(pressedKeys), false, t1);
+      W._EventStreamSubscription$(window, "keyup", new F.main_closure0(pressedKeys), false, t1);
+      P.Timer_Timer$periodic(P.Duration$(0, 0, 0, 50, 0, 0), new F.main_closure1(game, pressedKeys));
+      P.Timer_Timer$periodic(P.Duration$(0, 0, 0, 33, 0, 0), new F.main_closure2(game));
+      P.Timer_Timer$periodic(P.Duration$(0, 0, 0, C.JSDouble_methods.round$0(1000 / $screen.framesPerSecond), 0, 0), new F.main_closure3(game, $screen));
     }, "call$0", "main__main$closure", 0, 0, 1],
     main_closure: {
-      "^": "Closure:14;game",
+      "^": "Closure:6;pressedKeys",
       call$1: function($event) {
-        var t1;
-        switch (J.get$keyCode$x($event)) {
-          case 87:
-            t1 = this.game.player;
-            if (t1.velocityY === 0)
-              t1.velocityY = -5;
-            break;
-          case 65:
-            this.game.player.velocityX = -15;
-            break;
-          case 83:
-            break;
-          case 68:
-            this.game.player.velocityX = 15;
-            break;
-          default:
-            break;
-        }
+        var t1 = this.pressedKeys;
+        if (!C.JSArray_methods.contains$1(t1, J.get$keyCode$x($event)))
+          t1.push($event.keyCode);
       }
     },
     main_closure0: {
-      "^": "Closure:5;game",
+      "^": "Closure:6;pressedKeys",
+      call$1: function($event) {
+        C.JSArray_methods.remove$1(this.pressedKeys, J.get$keyCode$x($event));
+      }
+    },
+    main_closure1: {
+      "^": "Closure:3;game,pressedKeys",
+      call$1: function(t) {
+        var t1, t2, t3, _i, t4, t5;
+        for (t1 = this.pressedKeys, t2 = t1.length, t3 = this.game, _i = 0; t4 = t1.length, _i < t4; t4 === t2 || (0, H.throwConcurrentModificationError)(t1), ++_i)
+          switch (t1[_i]) {
+            case 87:
+              t5 = t3.player;
+              if (t5.velocityY === 0)
+                t5.velocityY = -15;
+              break;
+            case 65:
+              t3.player.velocityX = -15;
+              break;
+            case 83:
+              break;
+            case 68:
+              t3.player.velocityX = 15;
+              break;
+            default:
+              break;
+          }
+      }
+    },
+    main_closure2: {
+      "^": "Closure:3;game",
       call$1: function(t) {
         var t1 = this.game;
         t1.update$0();
@@ -6773,8 +6815,8 @@
           t.cancel$0();
       }
     },
-    main_closure1: {
-      "^": "Closure:5;game,screen",
+    main_closure3: {
+      "^": "Closure:3;game,screen",
       call$1: function(t) {
         this.screen.update$0();
         if (this.game.isFinished)
@@ -7187,7 +7229,7 @@
   Isolate = Isolate.$finishIsolateConstructor(Isolate);
   $ = new Isolate();
   init.metadata = [null];
-  init.types = [{func: 1}, {func: 1, v: true}, {func: 1, args: [,]}, {func: 1, v: true, args: [{func: 1, v: true}]}, {func: 1, ret: P.String, args: [P.int]}, {func: 1, args: [P.Timer]}, {func: 1, args: [, P.String]}, {func: 1, args: [P.String]}, {func: 1, args: [{func: 1, v: true}]}, {func: 1, v: true, args: [P.Object], opt: [P.StackTrace]}, {func: 1, args: [,], opt: [,]}, {func: 1, v: true, args: [, P.StackTrace]}, {func: 1, args: [,,]}, {func: 1, v: true, opt: [W.Event]}, {func: 1, args: [W.KeyboardEvent]}];
+  init.types = [{func: 1}, {func: 1, v: true}, {func: 1, args: [,]}, {func: 1, args: [P.Timer]}, {func: 1, v: true, args: [{func: 1, v: true}]}, {func: 1, ret: P.String, args: [P.int]}, {func: 1, args: [W.KeyEvent]}, {func: 1, args: [, P.String]}, {func: 1, args: [P.String]}, {func: 1, args: [{func: 1, v: true}]}, {func: 1, v: true, args: [P.Object], opt: [P.StackTrace]}, {func: 1, args: [,], opt: [,]}, {func: 1, v: true, args: [, P.StackTrace]}, {func: 1, args: [,,]}, {func: 1, v: true, opt: [W.Event]}];
   function convertToFastObject(properties) {
     function MyClass() {
     }
