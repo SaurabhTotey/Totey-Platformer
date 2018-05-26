@@ -25,7 +25,7 @@ class MovableEntity extends Entity {
     void act(Game game) {
         this.x = (this.x + this.velocityX).round();
         this.y = (this.y + this.velocityY).round();
-        this.velocityY -= game.level.gravity;
+        this.velocityY += game.level.gravity;
     }
 
     /**

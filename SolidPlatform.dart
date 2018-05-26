@@ -26,12 +26,14 @@ class SolidPlatform extends Entity {
             } else if (game.player.velocityX < 0) {
                 game.player.x = this.x + this.w;
             }
+            game.player.velocityX = 0.0;
         } else {
             if (game.player.velocityY > 0) {
                 game.player.y = this.y - game.player.h;
             } else if (game.player.velocityY < 0) {
                 game.player.y = this.y + this.h;
             }
+            game.player.velocityY = 0.0;
         }
     }
 

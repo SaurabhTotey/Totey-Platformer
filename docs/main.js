@@ -656,6 +656,15 @@
         for (t1 = collection.length, _i = 0; _i < collection.length; collection.length === t1 || (0, H.throwConcurrentModificationError)(collection), ++_i)
           receiver.push(collection[_i]);
       },
+      forEach$1: function(receiver, f) {
+        var end, i;
+        end = receiver.length;
+        for (i = 0; i < end; ++i) {
+          f.call$1(receiver[i]);
+          if (receiver.length !== end)
+            throw H.wrapException(new P.ConcurrentModificationError(receiver));
+        }
+      },
       map$1: function(receiver, f) {
         return new H.MappedListIterable(receiver, f, [H.getTypeArgumentByIndex(receiver, 0), null]);
       },
@@ -1656,6 +1665,29 @@
     },
     TimerImpl: {
       "^": "Object;_once,_inEventLoop,_handle",
+      cancel$0: function() {
+        if (self.setTimeout != null) {
+          if (this._inEventLoop)
+            throw H.wrapException(new P.UnsupportedError("Timer in event loop cannot be canceled."));
+          var t1 = this._handle;
+          if (t1 == null)
+            return;
+          --init.globalState.topEventLoop._activeJsAsyncCount;
+          if (this._once)
+            self.clearTimeout(t1);
+          else
+            self.clearInterval(t1);
+          this._handle = null;
+        } else
+          throw H.wrapException(new P.UnsupportedError("Canceling a timer."));
+      },
+      TimerImpl$periodic$2: function(milliseconds, callback) {
+        if (self.setTimeout != null) {
+          ++init.globalState.topEventLoop._activeJsAsyncCount;
+          this._handle = self.setInterval(H.convertDartClosureToJS(new H.TimerImpl$periodic_closure(this, callback), 0), milliseconds);
+        } else
+          throw H.wrapException(new P.UnsupportedError("Periodic timer."));
+      },
       TimerImpl$2: function(milliseconds, callback) {
         var t1, t2;
         if (milliseconds === 0)
@@ -1679,6 +1711,11 @@
           var t1 = new H.TimerImpl(true, false, null);
           t1.TimerImpl$2(milliseconds, callback);
           return t1;
+        },
+        TimerImpl$periodic: function(milliseconds, callback) {
+          var t1 = new H.TimerImpl(false, false, null);
+          t1.TimerImpl$periodic$2(milliseconds, callback);
+          return t1;
         }
       }
     },
@@ -1695,6 +1732,12 @@
         this.$this._handle = null;
         --init.globalState.topEventLoop._activeJsAsyncCount;
         this.callback.call$0();
+      }
+    },
+    TimerImpl$periodic_closure: {
+      "^": "Closure:0;$this,callback",
+      call$0: function() {
+        this.callback.call$1(this.$this);
       }
     },
     CapabilityImpl: {
@@ -3487,13 +3530,13 @@
       }
     },
     initHooks_closure0: {
-      "^": "Closure:5;getUnknownTag",
+      "^": "Closure:6;getUnknownTag",
       call$2: function(o, tag) {
         return this.getUnknownTag(o, tag);
       }
     },
     initHooks_closure1: {
-      "^": "Closure:6;prototypeForTag",
+      "^": "Closure:7;prototypeForTag",
       call$1: function(tag) {
         return this.prototypeForTag(tag);
       }
@@ -3886,9 +3929,24 @@
       }
       return P.Timer__createTimer(duration, t1.bindCallback$2$runGuarded(callback, true));
     },
+    Timer_Timer$periodic: function(duration, callback) {
+      var t1, boundCallback;
+      t1 = $.Zone__current;
+      if (t1 === C.C__RootZone) {
+        t1.toString;
+        return P.Timer__createPeriodicTimer(duration, callback);
+      }
+      boundCallback = t1.bindUnaryCallback$2$runGuarded(callback, true);
+      $.Zone__current.toString;
+      return P.Timer__createPeriodicTimer(duration, boundCallback);
+    },
     Timer__createTimer: function(duration, callback) {
       var milliseconds = C.JSInt_methods._tdivFast$1(duration._duration, 1000);
       return H.TimerImpl$(milliseconds < 0 ? 0 : milliseconds, callback);
+    },
+    Timer__createPeriodicTimer: function(duration, callback) {
+      var milliseconds = C.JSInt_methods._tdivFast$1(duration._duration, 1000);
+      return H.TimerImpl$periodic(milliseconds < 0 ? 0 : milliseconds, callback);
     },
     Zone_current: function() {
       return $.Zone__current;
@@ -3958,7 +4016,7 @@
       }
     },
     _AsyncRun__initializeScheduleImmediate_closure: {
-      "^": "Closure:7;_box_0,div,span",
+      "^": "Closure:8;_box_0,div,span",
       call$1: function(callback) {
         var t1, t2;
         ++init.globalState.topEventLoop._activeJsAsyncCount;
@@ -4137,7 +4195,7 @@
         P._Future__propagateToListeners(this, listeners);
       }, function(error) {
         return this._completeError$2(error, null);
-      }, "_completeError$1", "call$2", "call$1", "get$_completeError", 2, 2, 8, 0],
+      }, "_completeError$1", "call$2", "call$1", "get$_completeError", 2, 2, 9, 0],
       _Future$value$1: function(value, $T) {
         this._state = 4;
         this._resultOrListeners = value;
@@ -4291,7 +4349,7 @@
       }
     },
     _Future__chainForeignFuture_closure0: {
-      "^": "Closure:9;target",
+      "^": "Closure:10;target",
       call$2: function(error, stackTrace) {
         this.target._completeError$2(error, stackTrace);
       },
@@ -4824,7 +4882,7 @@
       }],
       _handleError$2: [function(error, stackTrace) {
         this._stream._handleError$3(error, stackTrace, this);
-      }, "call$2", "get$_handleError", 4, 0, 10],
+      }, "call$2", "get$_handleError", 4, 0, 11],
       _handleDone$0: [function() {
         this._async$_close$0();
       }, "call$0", "get$_handleDone", 0, 0, 1],
@@ -4861,6 +4919,9 @@
         }
         sink._async$_add$1(outputEvent);
       }
+    },
+    Timer: {
+      "^": "Object;"
     },
     AsyncError: {
       "^": "Object;error>,stackTrace<",
@@ -5421,7 +5482,7 @@
       $asEfficientLengthIterable: null
     },
     Maps_mapToString_closure: {
-      "^": "Closure:11;_box_0,result",
+      "^": "Closure:12;_box_0,result",
       call$2: function(k, v) {
         var t1, t2;
         t1 = this._box_0;
@@ -5640,6 +5701,11 @@
         twoDigitSeconds = t1.call$1(C.JSInt_methods._tdivFast$1(t2, 1000000) % 60);
         sixDigitUs = new P.Duration_toString_sixDigits().call$1(t2 % 1000000);
         return "" + C.JSInt_methods._tdivFast$1(t2, 3600000000) + ":" + H.S(twoDigitMinutes) + ":" + H.S(twoDigitSeconds) + "." + H.S(sixDigitUs);
+      },
+      static: {
+        Duration$: function(days, hours, microseconds, milliseconds, minutes, seconds) {
+          return new P.Duration(864e8 * days + 3600000000 * hours + 60000000 * minutes + 1000000 * seconds + 1000 * milliseconds + microseconds);
+        }
       }
     },
     Duration_toString_sixDigits: {
@@ -6382,6 +6448,21 @@
     "^": ""
   }], ["", "../Drawable.dart",, B, {
     "^": "",
+    intersect: function(first, second) {
+      var t1, t2;
+      t1 = first.x;
+      t2 = second.x;
+      if (t1 < t2 + second.w)
+        if (t1 + first.w > t2) {
+          t1 = first.y;
+          t2 = second.y;
+          t1 = t1 < t2 + second.h && t1 + first.h > t2;
+        } else
+          t1 = false;
+      else
+        t1 = false;
+      return t1;
+    },
     Color: {
       "^": "Object;r,g,b,a",
       toString$0: function(_) {
@@ -6397,7 +6478,11 @@
   }], ["", "../EndBlock.dart",, O, {
     "^": "",
     EndBlock: {
-      "^": "Entity;x,y,w,h,bg,sprite"
+      "^": "Entity;x,y,w,h,bg,sprite",
+      act$1: function(game) {
+        if (B.intersect(this, game.player))
+          game.isFinished = true;
+      }
     }
   }], ["", "../Entity.dart",, O, {
     "^": "",
@@ -6407,7 +6492,17 @@
   }], ["", "../Game.dart",, G, {
     "^": "",
     Game: {
-      "^": "Object;width,height,ticksPerSecond,isFinished,level,player,entities"
+      "^": "Object;width,height,ticksPerSecond,isFinished,level,player,entities",
+      update$0: function() {
+        this.player.act$1(this);
+        C.JSArray_methods.forEach$1(this.entities, new G.Game_update_closure(this));
+      }
+    },
+    Game_update_closure: {
+      "^": "Closure:2;$this",
+      call$1: function(entity) {
+        return entity.act$1(this.$this);
+      }
     }
   }], ["", "../Level.dart",, Q, {
     "^": "",
@@ -6417,7 +6512,15 @@
   }], ["", "../MovableEntity.dart",, R, {
     "^": "",
     MovableEntity: {
-      "^": "Entity;"
+      "^": "Entity;",
+      act$1: function(game) {
+        var t1, t2;
+        this.x = C.JSInt_methods.round$0(this.x + this.velocityX);
+        t1 = this.y;
+        t2 = this.velocityY;
+        this.y = C.JSInt_methods.round$0(t1 + t2);
+        this.velocityY = t2 + game.level.gravity;
+      }
     }
   }], ["", "../Player.dart",, R, {
     "^": "",
@@ -6427,7 +6530,7 @@
   }], ["", "../Screen.dart",, D, {
     "^": "",
     Screen: {
-      "^": "Object;screen,renderer,aspectRatio,game",
+      "^": "Object;screen,renderer,aspectRatio,framesPerSecond,game",
       update$0: function() {
         var t1, t2, logicalX, t3, logicalY, t4, t5, t6, stretchX, stretchY, drawables, _i, obj, t7, t8, t9;
         t1 = this.renderer;
@@ -6510,14 +6613,14 @@
       },
       static: {
         Screen$: function(game) {
-          var t1 = new D.Screen(null, null, [16, 9], game);
+          var t1 = new D.Screen(null, null, [16, 9], 60, game);
           t1.Screen$1(game);
           return t1;
         }
       }
     },
     Screen_resizeProc: {
-      "^": "Closure:12;$this",
+      "^": "Closure:13;$this",
       call$1: function(resizeEvent) {
         var t1, t2, t3, t4, t5, t6;
         t1 = window.innerWidth;
@@ -6553,12 +6656,30 @@
   }], ["", "../SolidPlatform.dart",, G, {
     "^": "",
     SolidPlatform: {
-      "^": "Entity;x,y,w,h,bg,sprite"
+      "^": "Entity;x,y,w,h,bg,sprite",
+      act$1: function(game) {
+        var t1, t2, t3, t4;
+        if (!B.intersect(this, game.player))
+          return;
+        t1 = game.player;
+        t2 = t1.y;
+        t3 = t1.h;
+        t4 = this.y;
+        if (t2 + t3 < t4 || t2 > t4 + this.h) {
+          if (t1.velocityX > 0)
+            t1.x = this.x - t1.w;
+          t1.velocityX = 0;
+        } else {
+          if (t1.velocityY > 0)
+            t1.y = t4 - t3;
+          t1.velocityY = 0;
+        }
+      }
     }
   }], ["", "../main.dart",, F, {
     "^": "",
     main: [function() {
-      var t1, t2, t3, t4, t5, crapTestLevel, crapTestGame;
+      var t1, t2, t3, t4, t5, crapTestLevel, game, $screen;
       t1 = [0, 0];
       t2 = new G.SolidPlatform(0, 800, 800, 100, C.Color_0_255_0_1, null);
       t3 = W.ImageElement_ImageElement(null, null, null);
@@ -6573,15 +6694,34 @@
       t4.sprite = t5;
       t5.src = "";
       crapTestLevel = new Q.Level(1600, 900, t1, [t2, t3], [t4], 1);
-      crapTestGame = new G.Game(1600, 900, 30, false, crapTestLevel, null, null);
+      game = new G.Game(1600, 900, 30, false, crapTestLevel, null, null);
       t1 = new R.Player(0, 0, t1[0], t1[1], 50, 100, C.Color_255_100_100_1, null);
       t4 = W.ImageElement_ImageElement(null, null, null);
       t1.sprite = t4;
       t4.src = "";
-      crapTestGame.player = t1;
-      crapTestGame.entities = P.List_List$from(crapTestLevel.entities, true, null);
-      D.Screen$(crapTestGame).update$0();
-    }, "call$0", "main__main$closure", 0, 0, 1]
+      game.player = t1;
+      game.entities = P.List_List$from(crapTestLevel.entities, true, null);
+      $screen = D.Screen$(game);
+      P.Timer_Timer$periodic(P.Duration$(0, 0, 0, 33, 0, 0), new F.main_closure(game));
+      P.Timer_Timer$periodic(P.Duration$(0, 0, 0, C.JSDouble_methods.round$0(1000 / $screen.framesPerSecond), 0, 0), new F.main_closure0(game, $screen));
+    }, "call$0", "main__main$closure", 0, 0, 1],
+    main_closure: {
+      "^": "Closure:5;game",
+      call$1: function(t) {
+        var t1 = this.game;
+        t1.update$0();
+        if (t1.isFinished)
+          t.cancel$0();
+      }
+    },
+    main_closure0: {
+      "^": "Closure:5;game,screen",
+      call$1: function(t) {
+        this.screen.update$0();
+        if (this.game.isFinished)
+          t.cancel$0();
+      }
+    }
   }, 1]];
   setupProgram(dart, 0);
   // getInterceptor methods
@@ -6985,7 +7125,7 @@
   Isolate = Isolate.$finishIsolateConstructor(Isolate);
   $ = new Isolate();
   init.metadata = [null];
-  init.types = [{func: 1}, {func: 1, v: true}, {func: 1, args: [,]}, {func: 1, v: true, args: [{func: 1, v: true}]}, {func: 1, ret: P.String, args: [P.int]}, {func: 1, args: [, P.String]}, {func: 1, args: [P.String]}, {func: 1, args: [{func: 1, v: true}]}, {func: 1, v: true, args: [P.Object], opt: [P.StackTrace]}, {func: 1, args: [,], opt: [,]}, {func: 1, v: true, args: [, P.StackTrace]}, {func: 1, args: [,,]}, {func: 1, v: true, opt: [W.Event]}];
+  init.types = [{func: 1}, {func: 1, v: true}, {func: 1, args: [,]}, {func: 1, v: true, args: [{func: 1, v: true}]}, {func: 1, ret: P.String, args: [P.int]}, {func: 1, args: [P.Timer]}, {func: 1, args: [, P.String]}, {func: 1, args: [P.String]}, {func: 1, args: [{func: 1, v: true}]}, {func: 1, v: true, args: [P.Object], opt: [P.StackTrace]}, {func: 1, args: [,], opt: [,]}, {func: 1, v: true, args: [, P.StackTrace]}, {func: 1, args: [,,]}, {func: 1, v: true, opt: [W.Event]}];
   function convertToFastObject(properties) {
     function MyClass() {
     }

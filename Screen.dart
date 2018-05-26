@@ -13,6 +13,8 @@ class Screen {
     CanvasRenderingContext2D renderer;
     //The aspect ratio for the game
     final aspectRatio = [16, 9];
+    //The framerate or how often the canvas updates
+    final framesPerSecond = 60;
     //The game that the screen will be drawing
     Game game;
 
