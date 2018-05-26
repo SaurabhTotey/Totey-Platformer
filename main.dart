@@ -33,7 +33,7 @@ void main() {
         for (final keyCode in pressedKeys) {
             switch (keyCode) {
                 case KeyCode.W: {
-                    if (game.player.velocityY == 0) {
+                    if (game.player.isGrounded) {
                         game.player.velocityY = -15.0;
                     }
                     break;

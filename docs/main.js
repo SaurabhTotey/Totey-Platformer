@@ -6528,9 +6528,7 @@
     Game: {
       "^": "Object;width,height,ticksPerSecond,isFinished,level,player,entities",
       update$0: function() {
-        var t1 = this.player;
-        t1.super$MovableEntity$act(this);
-        t1.velocityX = 0;
+        this.player.act$1(this);
         C.JSArray_methods.forEach$1(this.entities, new G.Game_update_closure(this));
       }
     },
@@ -6561,8 +6559,10 @@
   }], ["", "../Player.dart",, R, {
     "^": "",
     Player: {
-      "^": "MovableEntity;velocityX,velocityY,x,y,w,h,bg,sprite",
+      "^": "MovableEntity;isGrounded,velocityX,velocityY,x,y,w,h,bg,sprite",
       act$1: function(game) {
+        if (this.velocityY !== 0)
+          this.isGrounded = false;
         this.super$MovableEntity$act(game);
         this.velocityX = 0;
       }
@@ -6714,9 +6714,10 @@
           t1.velocityX = 0;
         } else {
           t2 = t1.velocityY;
-          if (t2 > 0)
+          if (t2 > 0) {
             t1.y = t4 - t3;
-          else if (t2 < 0)
+            t1.isGrounded = true;
+          } else if (t2 < 0)
             t1.y = t4 + this.h;
           t1.velocityY = 0;
         }
@@ -6753,7 +6754,7 @@
       t8.src = "";
       crapTestLevel = new Q.Level(3200, 1800, t1, [t2, t3, t4, t5, t6], [t7], 1);
       game = new G.Game(1600, 900, 30, false, crapTestLevel, null, null);
-      t1 = new R.Player(0, 0, t1[0], t1[1], 50, 100, C.Color_255_100_100_1, null);
+      t1 = new R.Player(false, 0, 0, t1[0], t1[1], 50, 100, C.Color_255_100_100_1, null);
       t7 = W.ImageElement_ImageElement(null, null, null);
       t1.sprite = t7;
       t7.src = "";
@@ -6790,7 +6791,7 @@
           switch (t1[_i]) {
             case 87:
               t5 = t3.player;
-              if (t5.velocityY === 0)
+              if (t5.isGrounded)
                 t5.velocityY = -15;
               break;
             case 65:

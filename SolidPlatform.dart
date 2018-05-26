@@ -30,6 +30,7 @@ class SolidPlatform extends Entity {
         } else {
             if (game.player.velocityY > 0) {
                 game.player.y = this.y - game.player.h;
+                game.player.isGrounded = true;
             } else if (game.player.velocityY < 0) {
                 game.player.y = this.y + this.h;
             }
