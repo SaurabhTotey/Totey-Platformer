@@ -7,9 +7,14 @@ import 'MovableEntity.dart';
  */
 class Player extends MovableEntity {
 
+    //The maximum amount of lives the player can have at any given point
     int maxLives = 3;
+    //Player's current amount of lives
     int lives = 2;
+    //Location of the player's last checkpoint: if the player were to lose a life, they would come back to this position
     List<int> lastCheckPoint;
+    //How many coins the player has
+    int coins = 0;
 
     ImageElement standingSprite = new ImageElement();
     ImageElement jumpingSprite = new ImageElement();

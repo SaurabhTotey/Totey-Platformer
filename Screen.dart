@@ -20,6 +20,8 @@ class Screen {
     Game game;
     //Sprite for showing number of lives
     ImageElement livesSprite = new ImageElement();
+    //Sprite for showing number of coins
+    ImageElement coinsSprite = new ImageElement();
 
     /**
      * Constructor for a screen
@@ -44,6 +46,7 @@ class Screen {
         resizeProc();
         window.onResize.listen(resizeProc);
         this.livesSprite.src = "res/heart.png";
+        this.coinsSprite.src = "res/coin.png";
     }
 
     /**
@@ -85,11 +88,15 @@ class Screen {
                 this.renderer.drawImageToRect(obj.sprite, new Rectangle((obj.x - logicalX) * stretchX, (obj.y - logicalY) * stretchY, obj.w * stretchX, obj.h * stretchY));
             }
         }
-        //Draws player lives
+        //Draws player lives and coins
+        final guiSize = 0.05 * this.screen.width;
         this.renderer.fillStyle = "red";
         this.renderer.font = "${0.05 * sqrt(pow(this.screen.width, 2) + pow(this.screen.height, 2))}px Arial";
-        this.renderer.fillText("${game.player.lives}x", 0, 0.05 * this.screen.width, 0.05 * this.screen.width);
-        this.renderer.drawImageToRect(this.livesSprite, new Rectangle(0.05 * this.screen.width, 0, 0.05 * this.screen.width, 0.05 * this.screen.width));
+        this.renderer.fillText("${this.game.player.lives}x", this.screen.width - 2 * guiSize, guiSize, guiSize);
+        this.renderer.drawImageToRect(this.livesSprite, new Rectangle(this.screen.width - guiSize, 0, guiSize, guiSize));
+        this.renderer.fillStyle = "yellow";
+        this.renderer.fillText("${this.game.player.coins}x", 0, guiSize, guiSize);
+        this.renderer.drawImageToRect(this.coinsSprite, new Rectangle(guiSize, 0, guiSize, guiSize));
     }
 
 }

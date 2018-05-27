@@ -6164,6 +6164,9 @@
       drawImageToRect$2: function($receiver, source, destRect) {
         return this.drawImageToRect$3$sourceRect($receiver, source, destRect, null);
       },
+      fillText$4: function(receiver, text, x, y, maxWidth) {
+        receiver.fillText(text, x, y, maxWidth);
+      },
       "%": "CanvasRenderingContext2D"
     },
     CharacterData: {
@@ -6733,7 +6736,7 @@
   }], ["", "../Player.dart",, R, {
     "^": "",
     Player: {
-      "^": "MovableEntity;maxLives,lives,lastCheckPoint,standingSprite,jumpingSprite,fallingSprites,rightSprites,leftSprites,velocityX,velocityY,isGrounded,x,y,w,h,bg,sprite",
+      "^": "MovableEntity;maxLives,lives,lastCheckPoint,coins,standingSprite,jumpingSprite,fallingSprites,rightSprites,leftSprites,velocityX,velocityY,isGrounded,x,y,w,h,bg,sprite",
       act$1: function(game) {
         var t1, t2;
         t1 = this.velocityY;
@@ -6806,7 +6809,7 @@
       static: {
         Player$: function(x, y) {
           var t1, t2;
-          t1 = new R.Player(3, 2, null, W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null), [W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null)], [W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null)], 0, 0, false, x, y, 50, 100, C.Color_0_0_0_0, null);
+          t1 = new R.Player(3, 2, null, 0, W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null), [W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null)], [W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null)], 0, 0, false, x, y, 50, 100, C.Color_0_0_0_0, null);
           t2 = W.ImageElement_ImageElement(null, null, null);
           t1.sprite = t2;
           t2.src = "";
@@ -6830,9 +6833,9 @@
   }], ["", "../Screen.dart",, D, {
     "^": "",
     Screen: {
-      "^": "Object;screen,renderer,aspectRatio,framesPerSecond,game,livesSprite",
+      "^": "Object;screen,renderer,aspectRatio,framesPerSecond,game,livesSprite,coinsSprite",
       update$0: function() {
-        var t1, t2, logicalX, t3, logicalY, t4, t5, t6, stretchX, stretchY, drawables, t7, _i, obj, t8, t9, t10, t11, t12, t13;
+        var t1, t2, logicalX, t3, logicalY, t4, t5, t6, stretchX, stretchY, drawables, t7, _i, obj, t8, t9, t10, t11, t12, t13, guiSize;
         t1 = this.renderer;
         t1.fillStyle = "black";
         t2 = this.screen;
@@ -6888,28 +6891,35 @@
             (t8 && C.CanvasRenderingContext2D_methods).drawImageToRect$2(t8, t9, new P.Rectangle(t10, t13, t11, t12, t7));
           }
         }
-        t1 = this.renderer;
-        t1.fillStyle = "red";
-        t3 = this.screen.width;
-        H.checkNum(t3);
-        t3 = Math.pow(t3, 2);
-        t4 = this.screen.height;
-        H.checkNum(t4);
-        t1.font = H.S(0.05 * Math.sqrt(t3 + Math.pow(t4, 2))) + "px Arial";
-        t4 = this.renderer;
-        t2 = "" + t2.player.lives + "x";
-        t3 = this.screen.width;
+        t1 = this.screen;
+        t3 = t1.width;
         if (typeof t3 !== "number")
           return H.iae(t3);
-        t3 = 0.05 * t3;
-        t4.toString;
-        t4.fillText(t2, 0, t3, t3);
+        guiSize = 0.05 * t3;
+        t3 = this.renderer;
+        t3.fillStyle = "red";
+        t1 = t1.width;
+        H.checkNum(t1);
+        t1 = Math.pow(t1, 2);
+        t4 = this.screen.height;
+        H.checkNum(t4);
+        t3.font = H.S(0.05 * Math.sqrt(t1 + Math.pow(t4, 2))) + "px Arial";
+        t4 = this.renderer;
+        t1 = "" + t2.player.lives + "x";
+        t3 = this.screen.width;
+        if (typeof t3 !== "number")
+          return t3.$sub();
+        (t4 && C.CanvasRenderingContext2D_methods).fillText$4(t4, t1, t3 - 2 * guiSize, guiSize, guiSize);
+        t3 = this.renderer;
+        t1 = this.screen.width;
+        if (typeof t1 !== "number")
+          return t1.$sub();
+        (t3 && C.CanvasRenderingContext2D_methods).drawImageToRect$2(t3, this.livesSprite, P.Rectangle$(t1 - guiSize, 0, guiSize, guiSize, null));
         t1 = this.renderer;
-        t2 = this.screen.width;
-        if (typeof t2 !== "number")
-          return H.iae(t2);
-        t2 = 0.05 * t2;
-        (t1 && C.CanvasRenderingContext2D_methods).drawImageToRect$2(t1, this.livesSprite, P.Rectangle$(t2, 0, t2, t2, null));
+        t1.fillStyle = "yellow";
+        (t1 && C.CanvasRenderingContext2D_methods).fillText$4(t1, "" + t2.player.coins + "x", 0, guiSize, guiSize);
+        t2 = this.renderer;
+        (t2 && C.CanvasRenderingContext2D_methods).drawImageToRect$2(t2, this.coinsSprite, P.Rectangle$(guiSize, 0, guiSize, guiSize, null));
       },
       Screen$1: function(game) {
         var t1, e;
@@ -6922,10 +6932,11 @@
         t1.call$0();
         W._EventStreamSubscription$(window, "resize", t1, false, W.Event);
         this.livesSprite.src = "res/heart.png";
+        this.coinsSprite.src = "res/coin.png";
       },
       static: {
         Screen$: function(game) {
-          var t1 = new D.Screen(null, null, [16, 9], 60, game, W.ImageElement_ImageElement(null, null, null));
+          var t1 = new D.Screen(null, null, [16, 9], 60, game, W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null));
           t1.Screen$1(game);
           return t1;
         }
