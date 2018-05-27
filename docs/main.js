@@ -650,6 +650,16 @@
         this.checkGrowable$1(receiver, "add");
         receiver.push(value);
       },
+      remove$1: function(receiver, element) {
+        var i;
+        this.checkGrowable$1(receiver, "remove");
+        for (i = 0; i < receiver.length; ++i)
+          if (J.$eq$(receiver[i], element)) {
+            receiver.splice(i, 1);
+            return true;
+          }
+        return false;
+      },
       _removeWhere$2: function(receiver, test, removeMatching) {
         var retained, end, i, element, t1;
         retained = [];
@@ -3612,13 +3622,13 @@
       }
     },
     initHooks_closure0: {
-      "^": "Closure:8;getUnknownTag",
+      "^": "Closure:9;getUnknownTag",
       call$2: function(o, tag) {
         return this.getUnknownTag(o, tag);
       }
     },
     initHooks_closure1: {
-      "^": "Closure:9;prototypeForTag",
+      "^": "Closure:10;prototypeForTag",
       call$1: function(tag) {
         return this.prototypeForTag(tag);
       }
@@ -4098,7 +4108,7 @@
       }
     },
     _AsyncRun__initializeScheduleImmediate_closure: {
-      "^": "Closure:10;_box_0,div,span",
+      "^": "Closure:11;_box_0,div,span",
       call$1: function(callback) {
         var t1, t2;
         ++init.globalState.topEventLoop._activeJsAsyncCount;
@@ -4277,7 +4287,7 @@
         P._Future__propagateToListeners(this, listeners);
       }, function(error) {
         return this._completeError$2(error, null);
-      }, "_completeError$1", "call$2", "call$1", "get$_completeError", 2, 2, 11, 0],
+      }, "_completeError$1", "call$2", "call$1", "get$_completeError", 2, 2, 12, 0],
       _Future$value$1: function(value, $T) {
         this._state = 4;
         this._resultOrListeners = value;
@@ -4431,7 +4441,7 @@
       }
     },
     _Future__chainForeignFuture_closure0: {
-      "^": "Closure:12;target",
+      "^": "Closure:13;target",
       call$2: function(error, stackTrace) {
         this.target._completeError$2(error, stackTrace);
       },
@@ -4964,7 +4974,7 @@
       }],
       _handleError$2: [function(error, stackTrace) {
         this._stream._handleError$3(error, stackTrace, this);
-      }, "call$2", "get$_handleError", 4, 0, 13],
+      }, "call$2", "get$_handleError", 4, 0, 14],
       _handleDone$0: [function() {
         this._async$_close$0();
       }, "call$0", "get$_handleDone", 0, 0, 1],
@@ -5564,7 +5574,7 @@
       $asEfficientLengthIterable: null
     },
     Maps_mapToString_closure: {
-      "^": "Closure:14;_box_0,result",
+      "^": "Closure:15;_box_0,result",
       call$2: function(k, v) {
         var t1, t2;
         t1 = this._box_0;
@@ -6666,6 +6676,37 @@
           game.player.lastCheckPoint = this.respawnPoint;
           this.sprite = $.$get$CheckPointGrave_activatedSprite();
         }
+      },
+      CheckPointGrave$2: function(x, y) {
+        var t1 = $.$get$CheckPointGrave_activatedSprite();
+        if (t1.src.length === 0) {
+          t1.src = "res/graveSprites/active.png";
+          $.$get$CheckPointGrave_inertSprite().src = "res/graveSprites/inert.png";
+        }
+        this.sprite = $.$get$CheckPointGrave_inertSprite();
+        this.respawnPoint = [this.x, J.$sub$n(this.y, 25)];
+      },
+      static: {
+        CheckPointGrave$: function(x, y) {
+          var t1, t2;
+          t1 = new N.CheckPointGrave(null, x, y, 50, 75, C.Color_0_0_0_0, null);
+          t2 = W.ImageElement_ImageElement(null, null, null);
+          t1.sprite = t2;
+          t2.src = "";
+          t1.CheckPointGrave$2(x, y);
+          return t1;
+        }
+      }
+    }
+  }], ["", "../Coin.dart",, L, {
+    "^": "",
+    Coin: {
+      "^": "Entity;x,y,w,h,bg,sprite",
+      act$1: function(game) {
+        if (!B.intersect(this, game.player))
+          return;
+        ++game.player.coins;
+        C.JSArray_methods.remove$1(game.entities, this);
       }
     }
   }], ["", "../Drawable.dart",, B, {
@@ -6716,6 +6757,85 @@
       "^": "Closure:2;$this",
       call$1: function(entity) {
         return entity.act$1(this.$this);
+      }
+    }
+  }], ["", "../ItemBlock.dart",, T, {
+    "^": "",
+    ItemBlock: {
+      "^": "Entity;containedItem,x,y,w,h,bg,sprite",
+      act$1: function(game) {
+        var t1, t2, movables, t3, t4, t5, _i, entity, t6, t7, t8, t9, t10;
+        t1 = game.entities;
+        t2 = H.getTypeArgumentByIndex(t1, 0);
+        movables = P.List_List$from(new H.WhereIterable(t1, new T.ItemBlock_act_closure(), [t2]), true, t2);
+        C.JSArray_methods.add$1(movables, game.player);
+        for (t1 = movables.length, t2 = this.h, t3 = this.w, t4 = -t3, t5 = -t2, _i = 0; _i < movables.length; movables.length === t1 || (0, H.throwConcurrentModificationError)(movables), ++_i) {
+          entity = movables[_i];
+          if (!B.intersect(this, entity))
+            continue;
+          if (J.$lt$n(entity.center$0()[0], this.x) || entity.get$velocityX() > t3) {
+            entity.set$velocityX(0);
+            entity.x = J.$sub$n(this.x, entity.w);
+          }
+          t6 = entity.x;
+          t7 = entity.w / 2;
+          t6 = J.$add$ns(t6, t7);
+          t8 = entity.y;
+          t9 = entity.h;
+          t10 = t9 / 2;
+          if (J.$gt$n([t6, J.$add$ns(t8, t10)][0], J.$add$ns(this.x, t3)) || entity.get$velocityX() < t4) {
+            entity.set$velocityX(0);
+            entity.x = J.$add$ns(this.x, t3);
+          }
+          if (J.$lt$n([J.$add$ns(entity.x, t7), J.$add$ns(entity.y, t10)][1], this.y) || entity.get$velocityY() > t2) {
+            entity.set$velocityY(0);
+            entity.y = J.$sub$n(this.y, t9);
+            entity.isGrounded = true;
+          }
+          if (J.$gt$n([J.$add$ns(entity.x, t7), J.$add$ns(entity.y, t10)][1], J.$add$ns(this.y, t2)) || entity.get$velocityY() < t5) {
+            entity.set$velocityY(0);
+            entity.y = J.$add$ns(this.y, t2);
+            t6 = this.containedItem;
+            if (t6 != null) {
+              C.JSArray_methods.add$1(game.entities, t6);
+              this.containedItem = null;
+              this.sprite = $.$get$ItemBlock_emptyItemSprite();
+            }
+          }
+        }
+      },
+      ItemBlock$3: function(x, y, containedItem) {
+        var t1, t2;
+        t1 = $.$get$ItemBlock_mysteryItemSprite();
+        if (t1.src.length === 0) {
+          t1.src = "res/questionSquare.png";
+          $.$get$ItemBlock_emptyItemSprite().src = "res/depletedBox.png";
+        }
+        if (this.containedItem == null) {
+          t1 = new L.Coin(this.x, J.$sub$n(this.y, 25), 25, 25, C.Color_0_0_0_0, null);
+          t2 = W.ImageElement_ImageElement(null, null, null);
+          t1.sprite = t2;
+          t2.src = "res/coin.png";
+          this.containedItem = t1;
+        }
+        this.sprite = $.$get$ItemBlock_mysteryItemSprite();
+      },
+      static: {
+        ItemBlock$: function(x, y, containedItem) {
+          var t1, t2;
+          t1 = new T.ItemBlock(containedItem, x, y, 50, 50, C.Color_0_0_0_0, null);
+          t2 = W.ImageElement_ImageElement(null, null, null);
+          t1.sprite = t2;
+          t2.src = "";
+          t1.ItemBlock$3(x, y, containedItem);
+          return t1;
+        }
+      }
+    },
+    ItemBlock_act_closure: {
+      "^": "Closure:6;",
+      call$1: function(e) {
+        return e instanceof R.MovableEntity;
       }
     }
   }], ["", "../Level.dart",, Q, {
@@ -6819,13 +6939,13 @@
       }
     },
     Player_act_closure: {
-      "^": "Closure:6;$this",
+      "^": "Closure:7;$this",
       call$1: function(img) {
         return !J.$eq$(this.$this.sprite, img);
       }
     },
     Player_act_closure0: {
-      "^": "Closure:6;$this",
+      "^": "Closure:7;$this",
       call$1: function(img) {
         return !J.$eq$(this.$this.sprite, img);
       }
@@ -6943,7 +7063,7 @@
       }
     },
     Screen_resizeProc: {
-      "^": "Closure:15;$this",
+      "^": "Closure:16;$this",
       call$1: function(resizeEvent) {
         var t1, t2, t3, t4, t5, t6;
         t1 = window.innerWidth;
@@ -7017,7 +7137,7 @@
       }
     },
     SolidPlatform_act_closure: {
-      "^": "Closure:16;",
+      "^": "Closure:6;",
       call$1: function(e) {
         return e instanceof R.MovableEntity;
       }
@@ -7025,8 +7145,8 @@
   }], ["", "../main.dart",, F, {
     "^": "",
     main: [function() {
-      var t1, t2, t3, t4, t5, t6, t7, t8, t9, crapTestLevel, game, $screen, pressedKeys;
-      t1 = [0, 0];
+      var t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, crapTestLevel, game, $screen, pressedKeys;
+      t1 = [0, 1600];
       t2 = new G.SolidPlatform(0, 1700, 800, 50, C.Color_0_0_0_0, null);
       t3 = W.ImageElement_ImageElement(null, null, null);
       t2.sprite = t3;
@@ -7039,17 +7159,7 @@
       t5 = W.ImageElement_ImageElement(null, null, null);
       t4.sprite = t5;
       t5.src = "res/ground.png";
-      t5 = new N.CheckPointGrave(null, 1975, 1425, 50, 75, C.Color_0_0_0_0, null);
-      t6 = W.ImageElement_ImageElement(null, null, null);
-      t5.sprite = t6;
-      t6.src = "";
-      t6 = $.$get$CheckPointGrave_activatedSprite();
-      if (t6.src.length === 0) {
-        t6.src = "res/graveSprites/active.png";
-        $.$get$CheckPointGrave_inertSprite().src = "res/graveSprites/inert.png";
-      }
-      t5.sprite = $.$get$CheckPointGrave_inertSprite();
-      t5.respawnPoint = [1975, 1400];
+      t5 = N.CheckPointGrave$(1975, 1425);
       t6 = new G.SolidPlatform(2400, 1400, 400, 50, C.Color_0_0_0_0, null);
       t7 = W.ImageElement_ImageElement(null, null, null);
       t6.sprite = t7;
@@ -7058,11 +7168,13 @@
       t8 = W.ImageElement_ImageElement(null, null, null);
       t7.sprite = t8;
       t8.src = "res/rainbowSquare.png";
-      t8 = new B.Drawable(0, 0, 3200, 1800, C.Color_135_206_250_1, null);
-      t9 = W.ImageElement_ImageElement(null, null, null);
-      t8.sprite = t9;
-      t9.src = "";
-      crapTestLevel = new Q.Level(3200, 1800, t1, [t2, t3, t4, t5, t6, t7], [t8], 1);
+      t8 = T.ItemBlock$(375, 1500, null);
+      t9 = T.ItemBlock$(1175, 1400, N.CheckPointGrave$(1175, 1325));
+      t10 = new B.Drawable(0, 0, 3200, 1800, C.Color_135_206_250_1, null);
+      t11 = W.ImageElement_ImageElement(null, null, null);
+      t10.sprite = t11;
+      t11.src = "";
+      crapTestLevel = new Q.Level(3200, 1800, t1, [t2, t3, t4, t5, t6, t7, t8, t9], [t10], 1);
       game = new G.Game(1600, 900, 30, false, crapTestLevel, null, null);
       game.player = R.Player$(t1[0], t1[1]);
       game.entities = P.List_List$from(crapTestLevel.entities, true, null);
@@ -7076,7 +7188,7 @@
       P.Timer_Timer$periodic(P.Duration$(0, 0, 0, C.JSDouble_methods.round$0(1000 / $screen.framesPerSecond), 0, 0), new F.main_closure3(game, $screen));
     }, "call$0", "main__main$closure", 0, 0, 1],
     main_closure: {
-      "^": "Closure:7;pressedKeys",
+      "^": "Closure:8;pressedKeys",
       call$1: function($event) {
         var t1 = this.pressedKeys;
         if (!C.JSArray_methods.contains$1(t1, J.get$keyCode$x($event)))
@@ -7084,7 +7196,7 @@
       }
     },
     main_closure0: {
-      "^": "Closure:7;pressedKeys",
+      "^": "Closure:8;pressedKeys",
       call$1: function($event) {
         var t1 = this.pressedKeys;
         C.JSArray_methods.checkGrowable$1(t1, "removeWhere");
@@ -7106,7 +7218,7 @@
             case 87:
               t5 = t3.player;
               if (t5.isGrounded)
-                t5.velocityY = -15;
+                t5.velocityY = -20;
               break;
             case 65:
               t3.player.velocityX = -15;
@@ -7564,11 +7676,15 @@
     return W.ImageElement_ImageElement(null, null, null);
   }, "CheckPointGrave_activatedSprite", "CheckPointGrave_inertSprite", "$get$CheckPointGrave_inertSprite", function() {
     return W.ImageElement_ImageElement(null, null, null);
-  }, "CheckPointGrave_inertSprite"]);
+  }, "CheckPointGrave_inertSprite", "ItemBlock_mysteryItemSprite", "$get$ItemBlock_mysteryItemSprite", function() {
+    return W.ImageElement_ImageElement(null, null, null);
+  }, "ItemBlock_mysteryItemSprite", "ItemBlock_emptyItemSprite", "$get$ItemBlock_emptyItemSprite", function() {
+    return W.ImageElement_ImageElement(null, null, null);
+  }, "ItemBlock_emptyItemSprite"]);
   Isolate = Isolate.$finishIsolateConstructor(Isolate);
   $ = new Isolate();
   init.metadata = [null];
-  init.types = [{func: 1}, {func: 1, v: true}, {func: 1, args: [,]}, {func: 1, args: [P.Timer]}, {func: 1, v: true, args: [{func: 1, v: true}]}, {func: 1, ret: P.String, args: [P.int]}, {func: 1, args: [W.ImageElement]}, {func: 1, args: [W.KeyEvent]}, {func: 1, args: [, P.String]}, {func: 1, args: [P.String]}, {func: 1, args: [{func: 1, v: true}]}, {func: 1, v: true, args: [P.Object], opt: [P.StackTrace]}, {func: 1, args: [,], opt: [,]}, {func: 1, v: true, args: [, P.StackTrace]}, {func: 1, args: [,,]}, {func: 1, v: true, opt: [W.Event]}, {func: 1, args: [O.Entity]}];
+  init.types = [{func: 1}, {func: 1, v: true}, {func: 1, args: [,]}, {func: 1, args: [P.Timer]}, {func: 1, v: true, args: [{func: 1, v: true}]}, {func: 1, ret: P.String, args: [P.int]}, {func: 1, args: [O.Entity]}, {func: 1, args: [W.ImageElement]}, {func: 1, args: [W.KeyEvent]}, {func: 1, args: [, P.String]}, {func: 1, args: [P.String]}, {func: 1, args: [{func: 1, v: true}]}, {func: 1, v: true, args: [P.Object], opt: [P.StackTrace]}, {func: 1, args: [,], opt: [,]}, {func: 1, v: true, args: [, P.StackTrace]}, {func: 1, args: [,,]}, {func: 1, v: true, opt: [W.Event]}];
   function convertToFastObject(properties) {
     function MyClass() {
     }
