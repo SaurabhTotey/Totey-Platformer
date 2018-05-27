@@ -33,14 +33,10 @@ class CheckPointGrave extends Entity {
      * Checks for player collisions: if one exists, sets the player's respawn point to this grave
      */
     void act(Game game) {
-        if (game.player.lastCheckPoint == this.respawnPoint) {
-            this.sprite = activatedSprite;
-        } else {
-            this.sprite = inertSprite;
-        }
         if (intersect(this, game.player)) {
             game.player.lastCheckPoint = this.respawnPoint;
             this.sprite = activatedSprite;
+            game.entities.where((entity) => entity is CheckPointGrave && entity != this).forEach((grave) => grave.sprite = inertSprite);
         }
     }
 
