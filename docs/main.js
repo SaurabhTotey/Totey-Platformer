@@ -6841,7 +6841,7 @@
   }], ["", "../Level.dart",, Q, {
     "^": "",
     Level: {
-      "^": "Object;width,height,startingPosition,entities,drawables,gravity"
+      "^": "Object;width,height,startingPosition,entities,drawables,background,parallaxFactor,gravity"
     }
   }], ["", "../MovableEntity.dart",, R, {
     "^": "",
@@ -7180,11 +7180,11 @@
       t8.src = "res/rainbowSquare.png";
       t8 = T.ItemBlock$(375, 1500, null);
       t9 = T.ItemBlock$(1175, 1400, N.CheckPointGrave$(1175, 1325));
-      t10 = new B.Drawable(0, 0, 3200, 1800, C.Color_135_206_250_1, null);
+      t10 = new B.Drawable(0, 0, 3200, 1800, C.Color_0_0_0_0, null);
       t11 = W.ImageElement_ImageElement(null, null, null);
       t10.sprite = t11;
-      t11.src = "";
-      crapTestLevel = new Q.Level(3200, 1800, t1, [t2, t3, t4, t5, t6, t7, t8, t9], [t10], 1);
+      t11.src = "res/backgrounds/pineHills.png";
+      crapTestLevel = new Q.Level(3200, 1800, t1, [t2, t3, t4, t5, t6, t7, t8, t9], [t10], null, 20, 1);
       game = new G.Game(1600, 900, 30, false, crapTestLevel, null, null);
       game.player = R.Player$(t1[0], t1[1]);
       game.entities = P.List_List$from(crapTestLevel.entities, true, null);
@@ -7423,7 +7423,6 @@
   C.C__DelayedDone = new P._DelayedDone();
   C.C__RootZone = new P._RootZone();
   C.Color_0_0_0_0 = new B.Color(0, 0, 0, 0);
-  C.Color_135_206_250_1 = new B.Color(135, 206, 250, 1);
   C.Duration_0 = new P.Duration(0);
   C.JS_CONST_0 = function(hooks) {
   if (typeof dartExperimentalFixupGetTag != "function") return hooks;
