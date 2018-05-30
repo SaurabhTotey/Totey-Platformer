@@ -14,7 +14,7 @@ import 'SolidPlatform.dart';
  */
 void main() {
     //Temporary crappy level for testing purposes
-    final crapTestLevel = new Level(width: 3200, height: 1800, startingPosition: [0, 1600], entities: [new SolidPlatform(0, 1700, 800, 50), new SolidPlatform(800, 1600, 800, 50), new SolidPlatform(1600, 1500, 800, 50), new CheckPointGrave(1975, 1425), new SolidPlatform(2400, 1400, 400, 50), new EndBlock(3100, 1200), new ItemBlock(375, 1500), new ItemBlock(1175, 1400, new CheckPointGrave(1175, 1325))], background: new Drawable(0, 0, 3200, 1800, spriteSrc: "res/backgrounds/pineHills.png"));
+    final crapTestLevel = new Level(width: 3200, height: 1200, startingPosition: [0, 1000], entities: [new SolidPlatform(0, 1100, 800, 50), new SolidPlatform(800, 1000, 800, 50), new SolidPlatform(1600, 900, 800, 50), new CheckPointGrave(1975, 825), new SolidPlatform(2400, 800, 400, 50), new EndBlock(3100, 600), new ItemBlock(375, 900), new ItemBlock(1175, 800, new CheckPointGrave(1175, 725))], background: new Drawable(0, 0, 3200, 1200, spriteSrc: "res/backgrounds/pineHills.png"));
 
     //Creates the objects that will represent the logic and graphics respectively
     Game game = new Game(crapTestLevel);

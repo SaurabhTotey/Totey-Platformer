@@ -84,10 +84,10 @@ class Screen {
                 this.game.level.background.sprite,
                 new Rectangle(0, 0, this.screen.width, this.screen.height),
                 sourceRect: new Rectangle(
-                    logicalX / maxPossibleLogicalX * (1 - this.game.level.backgroundVisibility) * bgWidth,
-                    logicalY / maxPossibleLogicalY * (1 - this.game.level.backgroundVisibility) * bgHeight,
-                    this.game.level.backgroundVisibility * bgWidth,
-                    this.game.level.backgroundVisibility * bgHeight
+                    logicalX / maxPossibleLogicalX * (1 - this.game.level.horizontalVisibility) * bgWidth,
+                    logicalY / maxPossibleLogicalY * (1 - this.game.level.verticalVisibility) * bgHeight,
+                    this.game.level.horizontalVisibility * bgWidth,
+                    this.game.level.verticalVisibility * bgHeight
                 )
             );
         }

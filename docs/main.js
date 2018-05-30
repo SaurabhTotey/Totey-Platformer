@@ -6944,7 +6944,7 @@
   }], ["", "../Level.dart",, Q, {
     "^": "",
     Level: {
-      "^": "Object;width>,height>,startingPosition,entities,drawables,background,backgroundVisibility,gravity"
+      "^": "Object;width>,height>,startingPosition,entities,drawables,background,horizontalVisibility,verticalVisibility,gravity"
     }
   }], ["", "../MovableEntity.dart",, R, {
     "^": "",
@@ -7105,13 +7105,13 @@
           t6 = t4.background.sprite;
           t7 = this.screen;
           t7 = P.Rectangle$(0, 0, t7.width, t7.height, null);
-          t8 = t4.backgroundVisibility;
-          t9 = 1 - t8;
+          t8 = t4.horizontalVisibility;
           if (typeof bgWidth !== "number")
             return H.iae(bgWidth);
+          t9 = t4.verticalVisibility;
           if (typeof bgHeight !== "number")
             return H.iae(bgHeight);
-          (t5 && C.CanvasRenderingContext2D_methods).drawImageToRect$3$sourceRect(t5, t6, t7, P.Rectangle$(logicalX / maxPossibleLogicalX * t9 * bgWidth, logicalY / maxPossibleLogicalY * t9 * bgHeight, t8 * bgWidth, t8 * bgHeight, null));
+          (t5 && C.CanvasRenderingContext2D_methods).drawImageToRect$3$sourceRect(t5, t6, t7, P.Rectangle$(logicalX / maxPossibleLogicalX * (1 - t8) * bgWidth, logicalY / maxPossibleLogicalY * (1 - t9) * bgHeight, t8 * bgWidth, t9 * bgHeight, null));
         }
         drawables = [];
         C.JSArray_methods.addAll$1(drawables, t4.drawables);
@@ -7327,35 +7327,35 @@
     "^": "",
     main: [function() {
       var t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, crapTestLevel, game, $screen, pressedKeys;
-      t1 = [0, 1600];
-      t2 = new G.SolidPlatform(0, 1700, 800, 50, C.Color_0_0_0_0, null);
+      t1 = [0, 1000];
+      t2 = new G.SolidPlatform(0, 1100, 800, 50, C.Color_0_0_0_0, null);
       t3 = W.ImageElement_ImageElement(null, null, null);
       t2.sprite = t3;
       t3.src = "res/ground.png";
-      t3 = new G.SolidPlatform(800, 1600, 800, 50, C.Color_0_0_0_0, null);
+      t3 = new G.SolidPlatform(800, 1000, 800, 50, C.Color_0_0_0_0, null);
       t4 = W.ImageElement_ImageElement(null, null, null);
       t3.sprite = t4;
       t4.src = "res/ground.png";
-      t4 = new G.SolidPlatform(1600, 1500, 800, 50, C.Color_0_0_0_0, null);
+      t4 = new G.SolidPlatform(1600, 900, 800, 50, C.Color_0_0_0_0, null);
       t5 = W.ImageElement_ImageElement(null, null, null);
       t4.sprite = t5;
       t5.src = "res/ground.png";
-      t5 = N.CheckPointGrave$(1975, 1425);
-      t6 = new G.SolidPlatform(2400, 1400, 400, 50, C.Color_0_0_0_0, null);
+      t5 = N.CheckPointGrave$(1975, 825);
+      t6 = new G.SolidPlatform(2400, 800, 400, 50, C.Color_0_0_0_0, null);
       t7 = W.ImageElement_ImageElement(null, null, null);
       t6.sprite = t7;
       t7.src = "res/ground.png";
-      t7 = new O.EndBlock(3100, 1200, 50, 50, C.Color_0_0_0_0, null);
+      t7 = new O.EndBlock(3100, 600, 50, 50, C.Color_0_0_0_0, null);
       t8 = W.ImageElement_ImageElement(null, null, null);
       t7.sprite = t8;
       t8.src = "res/rainbowSquare.png";
-      t8 = T.ItemBlock$(375, 1500, null);
-      t9 = T.ItemBlock$(1175, 1400, N.CheckPointGrave$(1175, 1325));
-      t10 = new B.Drawable(0, 0, 3200, 1800, C.Color_0_0_0_0, null);
+      t8 = T.ItemBlock$(375, 900, null);
+      t9 = T.ItemBlock$(1175, 800, N.CheckPointGrave$(1175, 725));
+      t10 = new B.Drawable(0, 0, 3200, 1200, C.Color_0_0_0_0, null);
       t11 = W.ImageElement_ImageElement(null, null, null);
       t10.sprite = t11;
       t11.src = "res/backgrounds/pineHills.png";
-      crapTestLevel = new Q.Level(3200, 1800, t1, [t2, t3, t4, t5, t6, t7, t8, t9], C.List_empty, t10, 0.8, 1);
+      crapTestLevel = new Q.Level(3200, 1200, t1, [t2, t3, t4, t5, t6, t7, t8, t9], C.List_empty, t10, 0.75, 0.9, 1);
       game = new G.Game(1600, 900, 30, false, crapTestLevel, null, null);
       game.player = R.Player$(t1[0], t1[1]);
       game.entities = P.List_List$from(crapTestLevel.entities, true, null);
