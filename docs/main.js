@@ -586,7 +586,7 @@
       toString$0: ["super$Interceptor$toString", function(receiver) {
         return H.Primitives_objectToHumanReadableString(receiver);
       }],
-      "%": "Blob|CanvasGradient|CanvasPattern|DOMError|File|FileError|MediaError|NavigatorUserMediaError|PositionError|SQLError|SVGAnimatedLength|SVGAnimatedLengthList|SVGAnimatedNumber|SVGAnimatedNumberList|SVGAnimatedString|Screen"
+      "%": "Blob|CanvasGradient|CanvasPattern|DOMError|File|FileError|MediaError|NavigatorUserMediaError|PositionError|SQLError|SVGAnimatedLength|SVGAnimatedLengthList|SVGAnimatedNumber|SVGAnimatedNumberList|SVGAnimatedString"
     },
     JSBool: {
       "^": "Interceptor;",
@@ -6124,7 +6124,7 @@
     },
     HtmlElement: {
       "^": "Element;",
-      "%": "HTMLBRElement|HTMLBaseElement|HTMLButtonElement|HTMLCanvasElement|HTMLContentElement|HTMLDListElement|HTMLDataListElement|HTMLDetailsElement|HTMLDialogElement|HTMLDirectoryElement|HTMLDivElement|HTMLFieldSetElement|HTMLFontElement|HTMLFrameElement|HTMLHRElement|HTMLHeadElement|HTMLHeadingElement|HTMLHtmlElement|HTMLKeygenElement|HTMLLIElement|HTMLLabelElement|HTMLLegendElement|HTMLLinkElement|HTMLMapElement|HTMLMarqueeElement|HTMLMenuElement|HTMLMenuItemElement|HTMLMetaElement|HTMLMeterElement|HTMLModElement|HTMLOListElement|HTMLObjectElement|HTMLOptGroupElement|HTMLOptionElement|HTMLOutputElement|HTMLParagraphElement|HTMLParamElement|HTMLPictureElement|HTMLPreElement|HTMLProgressElement|HTMLQuoteElement|HTMLShadowElement|HTMLSlotElement|HTMLSpanElement|HTMLStyleElement|HTMLTableCaptionElement|HTMLTableCellElement|HTMLTableColElement|HTMLTableDataCellElement|HTMLTableElement|HTMLTableHeaderCellElement|HTMLTableRowElement|HTMLTableSectionElement|HTMLTemplateElement|HTMLTextAreaElement|HTMLTitleElement|HTMLUListElement|HTMLUnknownElement;HTMLElement"
+      "%": "HTMLBRElement|HTMLBaseElement|HTMLButtonElement|HTMLContentElement|HTMLDListElement|HTMLDataListElement|HTMLDetailsElement|HTMLDialogElement|HTMLDirectoryElement|HTMLDivElement|HTMLFieldSetElement|HTMLFontElement|HTMLFrameElement|HTMLHRElement|HTMLHeadElement|HTMLHeadingElement|HTMLHtmlElement|HTMLKeygenElement|HTMLLIElement|HTMLLabelElement|HTMLLegendElement|HTMLLinkElement|HTMLMapElement|HTMLMarqueeElement|HTMLMenuElement|HTMLMenuItemElement|HTMLMetaElement|HTMLMeterElement|HTMLModElement|HTMLOListElement|HTMLOptGroupElement|HTMLOptionElement|HTMLOutputElement|HTMLParagraphElement|HTMLParamElement|HTMLPictureElement|HTMLPreElement|HTMLProgressElement|HTMLQuoteElement|HTMLShadowElement|HTMLSlotElement|HTMLSpanElement|HTMLStyleElement|HTMLTableCaptionElement|HTMLTableCellElement|HTMLTableColElement|HTMLTableDataCellElement|HTMLTableElement|HTMLTableHeaderCellElement|HTMLTableRowElement|HTMLTableSectionElement|HTMLTemplateElement|HTMLTextAreaElement|HTMLTitleElement|HTMLUListElement|HTMLUnknownElement;HTMLElement"
     },
     AnchorElement: {
       "^": "HtmlElement;",
@@ -6147,10 +6147,22 @@
       $isInterceptor: 1,
       "%": "HTMLBodyElement"
     },
+    CanvasElement: {
+      "^": "HtmlElement;height=,width=",
+      "%": "HTMLCanvasElement"
+    },
     CanvasRenderingContext2D: {
       "^": "Interceptor;",
       drawImageToRect$3$sourceRect: function(receiver, source, destRect, sourceRect) {
-        receiver.drawImage(source, destRect.left, destRect.top, destRect.width, destRect.height);
+        var t1, t2, t3, t4;
+        t1 = destRect.left;
+        t2 = destRect.top;
+        t3 = destRect.width;
+        t4 = destRect.height;
+        if (sourceRect == null)
+          receiver.drawImage(source, t1, t2, t3, t4);
+        else
+          receiver.drawImage(source, sourceRect.left, sourceRect.top, sourceRect.width, sourceRect.height, t1, t2, t3, t4);
       },
       drawImageToRect$2: function($receiver, source, destRect) {
         return this.drawImageToRect$3$sourceRect($receiver, source, destRect, null);
@@ -6186,7 +6198,7 @@
       "%": ";Element"
     },
     EmbedElement: {
-      "^": "HtmlElement;src=",
+      "^": "HtmlElement;height=,src=,width=",
       "%": "HTMLEmbedElement"
     },
     ErrorEvent: {
@@ -6214,17 +6226,17 @@
       "%": "HTMLFormElement"
     },
     IFrameElement: {
-      "^": "HtmlElement;src=",
+      "^": "HtmlElement;height=,src=,width=",
       "%": "HTMLIFrameElement"
     },
     ImageElement: {
-      "^": "HtmlElement;src=",
+      "^": "HtmlElement;height=,src=,width=",
       $isImageElement: 1,
       $isObject: 1,
       "%": "HTMLImageElement"
     },
     InputElement: {
-      "^": "HtmlElement;src=",
+      "^": "HtmlElement;height=,src=,width=",
       $isInterceptor: 1,
       "%": "HTMLInputElement"
     },
@@ -6234,7 +6246,11 @@
     },
     MediaElement: {
       "^": "HtmlElement;error=,src=",
-      "%": "HTMLAudioElement|HTMLMediaElement|HTMLVideoElement"
+      "%": "HTMLAudioElement;HTMLMediaElement"
+    },
+    MouseEvent: {
+      "^": "UIEvent;",
+      "%": "WheelEvent;DragEvent|MouseEvent"
     },
     Navigator: {
       "^": "Interceptor;",
@@ -6248,6 +6264,18 @@
         return value == null ? this.super$Interceptor$toString(receiver) : value;
       },
       "%": "Attr|Document|HTMLDocument|XMLDocument;Node"
+    },
+    ObjectElement: {
+      "^": "HtmlElement;height=,width=",
+      "%": "HTMLObjectElement"
+    },
+    PointerEvent: {
+      "^": "MouseEvent;height=,width=",
+      "%": "PointerEvent"
+    },
+    Screen0: {
+      "^": "Interceptor;height=,width=",
+      "%": "Screen"
     },
     ScriptElement: {
       "^": "HtmlElement;src=",
@@ -6271,7 +6299,11 @@
     },
     UIEvent: {
       "^": "Event;",
-      "%": "CompositionEvent|DragEvent|FocusEvent|MouseEvent|PointerEvent|SVGZoomEvent|TextEvent|TouchEvent|WheelEvent;UIEvent"
+      "%": "CompositionEvent|FocusEvent|SVGZoomEvent|TextEvent|TouchEvent;UIEvent"
+    },
+    VideoElement: {
+      "^": "MediaElement;height=,width=",
+      "%": "HTMLVideoElement"
     },
     Window: {
       "^": "EventTarget;",
@@ -6414,12 +6446,22 @@
       }
     },
     Rectangle: {
-      "^": "_RectangleBase;left,top,width,height,$ti",
+      "^": "_RectangleBase;left,top,width>,height>,$ti",
       static: {
         Rectangle$: function(left, $top, width, height, $T) {
           var t1, t2;
-          t1 = width < 0 ? -width * 0 : width;
-          t2 = height < 0 ? -height * 0 : height;
+          if (typeof width !== "number")
+            return width.$lt();
+          if (width < 0)
+            t1 = -width * 0;
+          else
+            t1 = width;
+          if (typeof height !== "number")
+            return height.$lt();
+          if (height < 0)
+            t2 = -height * 0;
+          else
+            t2 = height;
           return new P.Rectangle(left, $top, t1, t2, [$T]);
         }
       }
@@ -6437,67 +6479,67 @@
       "%": "SVGAnimateElement|SVGAnimateMotionElement|SVGAnimateTransformElement|SVGAnimationElement|SVGSetElement"
     },
     FEBlendElement: {
-      "^": "SvgElement;x=",
+      "^": "SvgElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGFEBlendElement"
     },
     FEColorMatrixElement: {
-      "^": "SvgElement;x=",
+      "^": "SvgElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGFEColorMatrixElement"
     },
     FEComponentTransferElement: {
-      "^": "SvgElement;x=",
+      "^": "SvgElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGFEComponentTransferElement"
     },
     FECompositeElement: {
-      "^": "SvgElement;x=",
+      "^": "SvgElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGFECompositeElement"
     },
     FEConvolveMatrixElement: {
-      "^": "SvgElement;x=",
+      "^": "SvgElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGFEConvolveMatrixElement"
     },
     FEDiffuseLightingElement: {
-      "^": "SvgElement;x=",
+      "^": "SvgElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGFEDiffuseLightingElement"
     },
     FEDisplacementMapElement: {
-      "^": "SvgElement;x=",
+      "^": "SvgElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGFEDisplacementMapElement"
     },
     FEFloodElement: {
-      "^": "SvgElement;x=",
+      "^": "SvgElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGFEFloodElement"
     },
     FEGaussianBlurElement: {
-      "^": "SvgElement;x=",
+      "^": "SvgElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGFEGaussianBlurElement"
     },
     FEImageElement: {
-      "^": "SvgElement;x=",
+      "^": "SvgElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGFEImageElement"
     },
     FEMergeElement: {
-      "^": "SvgElement;x=",
+      "^": "SvgElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGFEMergeElement"
     },
     FEMorphologyElement: {
-      "^": "SvgElement;x=",
+      "^": "SvgElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGFEMorphologyElement"
     },
     FEOffsetElement: {
-      "^": "SvgElement;x=",
+      "^": "SvgElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGFEOffsetElement"
     },
@@ -6506,7 +6548,7 @@
       "%": "SVGFEPointLightElement"
     },
     FESpecularLightingElement: {
-      "^": "SvgElement;x=",
+      "^": "SvgElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGFESpecularLightingElement"
     },
@@ -6515,22 +6557,22 @@
       "%": "SVGFESpotLightElement"
     },
     FETileElement: {
-      "^": "SvgElement;x=",
+      "^": "SvgElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGFETileElement"
     },
     FETurbulenceElement: {
-      "^": "SvgElement;x=",
+      "^": "SvgElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGFETurbulenceElement"
     },
     FilterElement: {
-      "^": "SvgElement;x=",
+      "^": "SvgElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGFilterElement"
     },
     ForeignObjectElement: {
-      "^": "GraphicsElement;x=",
+      "^": "GraphicsElement;height=,width=,x=",
       "%": "SVGForeignObjectElement"
     },
     GeometryElement: {
@@ -6543,7 +6585,7 @@
       "%": "SVGClipPathElement|SVGDefsElement|SVGGElement|SVGSwitchElement;SVGGraphicsElement"
     },
     ImageElement0: {
-      "^": "GraphicsElement;x=",
+      "^": "GraphicsElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGImageElement"
     },
@@ -6553,17 +6595,17 @@
       "%": "SVGMarkerElement"
     },
     MaskElement: {
-      "^": "SvgElement;x=",
+      "^": "SvgElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGMaskElement"
     },
     PatternElement: {
-      "^": "SvgElement;x=",
+      "^": "SvgElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGPatternElement"
     },
     RectElement: {
-      "^": "GeometryElement;x=",
+      "^": "GeometryElement;height=,width=,x=",
       "%": "SVGRectElement"
     },
     ScriptElement0: {
@@ -6577,7 +6619,7 @@
       "%": "SVGComponentTransferFunctionElement|SVGDescElement|SVGDiscardElement|SVGFEDistantLightElement|SVGFEFuncAElement|SVGFEFuncBElement|SVGFEFuncGElement|SVGFEFuncRElement|SVGFEMergeNodeElement|SVGMetadataElement|SVGStopElement|SVGStyleElement|SVGTitleElement;SVGElement"
     },
     SvgSvgElement: {
-      "^": "GraphicsElement;x=",
+      "^": "GraphicsElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGSVGElement"
     },
@@ -6600,7 +6642,7 @@
       "%": "SVGTSpanElement|SVGTextElement|SVGTextPositioningElement"
     },
     UseElement: {
-      "^": "GraphicsElement;x=",
+      "^": "GraphicsElement;height=,width=,x=",
       $isInterceptor: 1,
       "%": "SVGUseElement"
     },
@@ -6703,14 +6745,30 @@
       t3 = second.get$w();
       if (typeof t2 !== "number")
         return t2.$add();
-      if (t1 < t2 + t3)
-        if (first.x + first.w > second.x) {
+      if (typeof t3 !== "number")
+        return H.iae(t3);
+      if (t1 < t2 + t3) {
+        t1 = first.x;
+        t2 = first.w;
+        if (typeof t2 !== "number")
+          return H.iae(t2);
+        if (t1 + t2 > second.x) {
           t1 = first.y;
           t2 = second.y;
-          t1 = t1 < t2 + second.h && t1 + first.h > t2;
+          t3 = second.h;
+          if (typeof t3 !== "number")
+            return H.iae(t3);
+          if (t1 < t2 + t3) {
+            t3 = first.h;
+            if (typeof t3 !== "number")
+              return H.iae(t3);
+            t2 = t1 + t3 > t2;
+            t1 = t2;
+          } else
+            t1 = false;
         } else
           t1 = false;
-      else
+      } else
         t1 = false;
       return t1;
     },
@@ -6723,7 +6781,16 @@
     Drawable: {
       "^": "Object;x>,y,w<,h,bg,sprite?",
       center$0: function() {
-        return [this.x + this.w / 2, this.y + this.h / 2];
+        var t1, t2, t3, t4;
+        t1 = this.x;
+        t2 = this.w;
+        if (typeof t2 !== "number")
+          return t2.$div();
+        t3 = this.y;
+        t4 = this.h;
+        if (typeof t4 !== "number")
+          return t4.$div();
+        return [t1 + t2 / 2, t3 + t4 / 2];
       }
     }
   }], ["", "../EndBlock.dart",, O, {
@@ -6743,12 +6810,17 @@
   }], ["", "../Game.dart",, G, {
     "^": "",
     Game: {
-      "^": "Object;width,height,ticksPerSecond,isFinished,level,player,entities",
+      "^": "Object;width>,height>,ticksPerSecond,isFinished,level,player,entities",
       update$0: function() {
+        var t1, t2, t3;
         this.player.act$1(this);
         C.JSArray_methods.forEach$1(this.entities, new G.Game_update_closure(this));
-        var t1 = this.player;
-        if (t1.y > this.level.height)
+        t1 = this.player;
+        t2 = t1.y;
+        t3 = this.level.height;
+        if (typeof t3 !== "number")
+          return H.iae(t3);
+        if (t2 > t3)
           t1.loseLife$0();
         if (this.player.lives <= 0)
           this.isFinished = true;
@@ -6765,39 +6837,70 @@
     ItemBlock: {
       "^": "Entity;containedItem,x,y,w,h,bg,sprite",
       act$1: function(game) {
-        var t1, t2, movables, t3, t4, t5, _i, entity, t6, t7, t8, t9, t10;
+        var t1, t2, movables, t3, _i, entity, t4, t5, t6, t7, t8;
         t1 = game.entities;
         t2 = H.getTypeArgumentByIndex(t1, 0);
         movables = P.List_List$from(new H.WhereIterable(t1, new T.ItemBlock_act_closure(), [t2]), true, t2);
         C.JSArray_methods.add$1(movables, game.player);
-        for (t1 = movables.length, t2 = this.h, t3 = this.w, t4 = -t3, t5 = -t2, _i = 0; _i < movables.length; movables.length === t1 || (0, H.throwConcurrentModificationError)(movables), ++_i) {
+        for (t1 = movables.length, t2 = this.h, t3 = this.w, _i = 0; _i < movables.length; movables.length === t1 || (0, H.throwConcurrentModificationError)(movables), ++_i) {
           entity = movables[_i];
           if (!B.intersect(this, entity))
             continue;
-          if (entity.center$0()[0] < this.x || entity.get$velocityX() > t3) {
+          if (!(entity.center$0()[0] < this.x)) {
+            t4 = entity.get$velocityX();
+            if (typeof t3 !== "number")
+              return H.iae(t3);
+            t4 = t4 > t3;
+          } else
+            t4 = true;
+          if (t4) {
             entity.set$velocityX(0);
-            entity.x = this.x - entity.w;
+            t4 = this.x;
+            t5 = entity.w;
+            if (typeof t5 !== "number")
+              return H.iae(t5);
+            entity.x = t4 - t5;
           }
-          t6 = entity.x;
-          t7 = entity.w / 2;
-          t8 = entity.y;
-          t9 = entity.h;
-          t10 = t9 / 2;
-          if ([t6 + t7, t8 + t10][0] > this.x + t3 || entity.get$velocityX() < t4) {
+          t4 = entity.x;
+          t5 = entity.w;
+          if (typeof t5 !== "number")
+            return t5.$div();
+          t5 /= 2;
+          t6 = entity.y;
+          t7 = entity.h;
+          if (typeof t7 !== "number")
+            return t7.$div();
+          t8 = t7 / 2;
+          t6 = [t4 + t5, t6 + t8][0];
+          t4 = this.x;
+          if (typeof t3 !== "number")
+            return H.iae(t3);
+          if (t6 > t4 + t3 || entity.get$velocityX() < -t3) {
             entity.set$velocityX(0);
             entity.x = this.x + t3;
           }
-          if ([entity.x + t7, entity.y + t10][1] < this.y || entity.get$velocityY() > t2) {
+          if (!([entity.x + t5, entity.y + t8][1] < this.y)) {
+            t4 = entity.get$velocityY();
+            if (typeof t2 !== "number")
+              return H.iae(t2);
+            t4 = t4 > t2;
+          } else
+            t4 = true;
+          if (t4) {
             entity.set$velocityY(0);
-            entity.y = this.y - t9;
+            entity.y = this.y - t7;
             entity.isGrounded = true;
           }
-          if ([entity.x + t7, entity.y + t10][1] > this.y + t2 || entity.get$velocityY() < t5) {
+          t4 = [entity.x + t5, entity.y + t8][1];
+          t5 = this.y;
+          if (typeof t2 !== "number")
+            return H.iae(t2);
+          if (t4 > t5 + t2 || entity.get$velocityY() < -t2) {
             entity.set$velocityY(0);
             entity.y = this.y + t2;
-            t6 = this.containedItem;
-            if (t6 != null) {
-              C.JSArray_methods.add$1(game.entities, t6);
+            t4 = this.containedItem;
+            if (t4 != null) {
+              C.JSArray_methods.add$1(game.entities, t4);
               this.containedItem = null;
               this.sprite = $.$get$ItemBlock_emptyItemSprite();
             }
@@ -6841,7 +6944,7 @@
   }], ["", "../Level.dart",, Q, {
     "^": "",
     Level: {
-      "^": "Object;width,height,startingPosition,entities,drawables,background,parallaxFactor,gravity"
+      "^": "Object;width>,height>,startingPosition,entities,drawables,background,backgroundVisibility,gravity"
     }
   }], ["", "../MovableEntity.dart",, R, {
     "^": "",
@@ -6897,7 +7000,11 @@
           t1 = 0;
         }
         t2 = this.w;
+        if (typeof t2 !== "number")
+          return H.iae(t2);
         t3 = game.level.width;
+        if (typeof t3 !== "number")
+          return H.iae(t3);
         if (t1 + t2 > t3)
           this.x = t3 - t2;
         if (this.y < 0)
@@ -6955,7 +7062,7 @@
     Screen: {
       "^": "Object;screen,renderer,aspectRatio,framesPerSecond,game,livesSprite,coinsSprite",
       update$0: function() {
-        var t1, t2, logicalX, t3, logicalY, t4, t5, t6, stretchX, stretchY, drawables, _i, obj, t7, t8, t9, t10, t11, guiSize;
+        var t1, t2, logicalX, t3, logicalY, t4, t5, maxPossibleLogicalX, t6, maxPossibleLogicalY, stretchX, stretchY, bgWidth, bgHeight, t7, t8, t9, drawables, _i, obj, t10, t11, guiSize;
         t1 = this.renderer;
         t1.fillStyle = "black";
         t2 = this.screen;
@@ -6965,17 +7072,23 @@
         logicalX = t2.player.center$0()[0] - t1 / 2;
         t3 = t2.height;
         logicalY = t2.player.center$0()[1] - t3 / 2;
-        if (logicalX < 0)
-          logicalX = 0;
         t4 = t2.level;
         t5 = t4.width;
+        if (typeof t5 !== "number")
+          return t5.$sub();
+        maxPossibleLogicalX = t5 - t1;
+        t6 = t4.height;
+        if (typeof t6 !== "number")
+          return t6.$sub();
+        maxPossibleLogicalY = t6 - t3;
+        if (logicalX < 0)
+          logicalX = 0;
         if (logicalX + t1 > t5)
-          logicalX = t5 - t1;
+          logicalX = maxPossibleLogicalX;
         if (logicalY < 0)
           logicalY = 0;
-        t5 = t4.height;
-        if (logicalY + t3 > t5)
-          logicalY = t5 - t3;
+        if (logicalY + t3 > t6)
+          logicalY = maxPossibleLogicalY;
         t5 = this.screen;
         t6 = t5.width;
         if (typeof t6 !== "number")
@@ -6985,18 +7098,39 @@
         if (typeof t5 !== "number")
           return t5.$div();
         stretchY = t5 / t3;
-        drawables = P.List_List$from(t4.drawables, true, null);
+        if (J.get$src$x(t4.background.sprite).length !== 0) {
+          bgWidth = J.get$width$x(t4.background.sprite);
+          bgHeight = J.get$height$x(t4.background.sprite);
+          t5 = this.renderer;
+          t6 = t4.background.sprite;
+          t7 = this.screen;
+          t7 = P.Rectangle$(0, 0, t7.width, t7.height, null);
+          t8 = t4.backgroundVisibility;
+          t9 = 1 - t8;
+          if (typeof bgWidth !== "number")
+            return H.iae(bgWidth);
+          if (typeof bgHeight !== "number")
+            return H.iae(bgHeight);
+          (t5 && C.CanvasRenderingContext2D_methods).drawImageToRect$3$sourceRect(t5, t6, t7, P.Rectangle$(logicalX / maxPossibleLogicalX * t9 * bgWidth, logicalY / maxPossibleLogicalY * t9 * bgHeight, t8 * bgWidth, t8 * bgHeight, null));
+        }
+        drawables = [];
+        C.JSArray_methods.addAll$1(drawables, t4.drawables);
         C.JSArray_methods.addAll$1(drawables, t2.entities);
-        C.JSArray_methods.add$1(drawables, t2.player);
+        drawables.push(t2.player);
         for (t4 = drawables.length, t1 = logicalX + t1, t3 = logicalY + t3, t5 = [null], _i = 0; _i < drawables.length; drawables.length === t4 || (0, H.throwConcurrentModificationError)(drawables), ++_i) {
           obj = drawables[_i];
           t6 = J.get$x$x(obj);
           t7 = obj.get$w();
           if (typeof t6 !== "number")
             return t6.$add();
+          if (typeof t7 !== "number")
+            return H.iae(t7);
           if (!(t6 + t7 < logicalX)) {
             t6 = obj.y;
-            t6 = t6 + obj.h < logicalY || obj.x > t1 || t6 > t3;
+            t7 = obj.h;
+            if (typeof t7 !== "number")
+              return H.iae(t7);
+            t6 = t6 + t7 < logicalY || obj.x > t1 || t6 > t3;
           } else
             t6 = true;
           if (t6)
@@ -7007,8 +7141,14 @@
           t7 = this.renderer;
           t6 = obj.x;
           t8 = obj.y;
-          t9 = obj.w * stretchX;
-          t10 = obj.h * stretchY;
+          t9 = obj.w;
+          if (typeof t9 !== "number")
+            return t9.$mul();
+          t9 *= stretchX;
+          t10 = obj.h;
+          if (typeof t10 !== "number")
+            return t10.$mul();
+          t10 *= stretchY;
           t7.fillRect((t6 - logicalX) * stretchX, (t8 - logicalY) * stretchY, t9, t10);
           if (J.get$src$x(obj.sprite).length !== 0) {
             t6 = this.renderer;
@@ -7112,34 +7252,65 @@
     SolidPlatform: {
       "^": "Entity;x,y,w,h,bg,sprite",
       act$1: function(game) {
-        var t1, t2, movables, t3, t4, t5, _i, entity, t6, t7, t8, t9, t10;
+        var t1, t2, movables, t3, _i, entity, t4, t5, t6, t7, t8;
         t1 = game.entities;
         t2 = H.getTypeArgumentByIndex(t1, 0);
         movables = P.List_List$from(new H.WhereIterable(t1, new G.SolidPlatform_act_closure(), [t2]), true, t2);
         C.JSArray_methods.add$1(movables, game.player);
-        for (t1 = movables.length, t2 = this.h, t3 = this.w, t4 = -t3, t5 = -t2, _i = 0; _i < movables.length; movables.length === t1 || (0, H.throwConcurrentModificationError)(movables), ++_i) {
+        for (t1 = movables.length, t2 = this.h, t3 = this.w, _i = 0; _i < movables.length; movables.length === t1 || (0, H.throwConcurrentModificationError)(movables), ++_i) {
           entity = movables[_i];
           if (!B.intersect(this, entity))
             continue;
-          if (entity.center$0()[0] < this.x || entity.get$velocityX() > t3) {
+          if (!(entity.center$0()[0] < this.x)) {
+            t4 = entity.get$velocityX();
+            if (typeof t3 !== "number")
+              return H.iae(t3);
+            t4 = t4 > t3;
+          } else
+            t4 = true;
+          if (t4) {
             entity.set$velocityX(0);
-            entity.x = this.x - entity.w;
+            t4 = this.x;
+            t5 = entity.w;
+            if (typeof t5 !== "number")
+              return H.iae(t5);
+            entity.x = t4 - t5;
           }
-          t6 = entity.x;
-          t7 = entity.w / 2;
-          t8 = entity.y;
-          t9 = entity.h;
-          t10 = t9 / 2;
-          if ([t6 + t7, t8 + t10][0] > this.x + t3 || entity.get$velocityX() < t4) {
+          t4 = entity.x;
+          t5 = entity.w;
+          if (typeof t5 !== "number")
+            return t5.$div();
+          t5 /= 2;
+          t6 = entity.y;
+          t7 = entity.h;
+          if (typeof t7 !== "number")
+            return t7.$div();
+          t8 = t7 / 2;
+          t6 = [t4 + t5, t6 + t8][0];
+          t4 = this.x;
+          if (typeof t3 !== "number")
+            return H.iae(t3);
+          if (t6 > t4 + t3 || entity.get$velocityX() < -t3) {
             entity.set$velocityX(0);
             entity.x = this.x + t3;
           }
-          if ([entity.x + t7, entity.y + t10][1] < this.y || entity.get$velocityY() > t2) {
+          if (!([entity.x + t5, entity.y + t8][1] < this.y)) {
+            t4 = entity.get$velocityY();
+            if (typeof t2 !== "number")
+              return H.iae(t2);
+            t4 = t4 > t2;
+          } else
+            t4 = true;
+          if (t4) {
             entity.set$velocityY(0);
-            entity.y = this.y - t9;
+            entity.y = this.y - t7;
             entity.isGrounded = true;
           }
-          if ([entity.x + t7, entity.y + t10][1] > this.y + t2 || entity.get$velocityY() < t5) {
+          t4 = [entity.x + t5, entity.y + t8][1];
+          t5 = this.y;
+          if (typeof t2 !== "number")
+            return H.iae(t2);
+          if (t4 > t5 + t2 || entity.get$velocityY() < -t2) {
             entity.set$velocityY(0);
             entity.y = this.y + t2;
           }
@@ -7184,7 +7355,7 @@
       t11 = W.ImageElement_ImageElement(null, null, null);
       t10.sprite = t11;
       t11.src = "res/backgrounds/pineHills.png";
-      crapTestLevel = new Q.Level(3200, 1800, t1, [t2, t3, t4, t5, t6, t7, t8, t9], [t10], null, 20, 1);
+      crapTestLevel = new Q.Level(3200, 1800, t1, [t2, t3, t4, t5, t6, t7, t8, t9], C.List_empty, t10, 0.8, 1);
       game = new G.Game(1600, 900, 30, false, crapTestLevel, null, null);
       game.player = R.Player$(t1[0], t1[1]);
       game.entities = P.List_List$from(crapTestLevel.entities, true, null);
@@ -7351,6 +7522,9 @@
   J.get$error$x = function(receiver) {
     return J.getInterceptor$x(receiver).get$error(receiver);
   };
+  J.get$height$x = function(receiver) {
+    return J.getInterceptor$x(receiver).get$height(receiver);
+  };
   J.get$iterator$ax = function(receiver) {
     return J.getInterceptor$ax(receiver).get$iterator(receiver);
   };
@@ -7362,6 +7536,9 @@
   };
   J.get$src$x = function(receiver) {
     return J.getInterceptor$x(receiver).get$src(receiver);
+  };
+  J.get$width$x = function(receiver) {
+    return J.getInterceptor$x(receiver).get$width(receiver);
   };
   J.get$x$x = function(receiver) {
     return J.getInterceptor$x(receiver).get$x(receiver);
@@ -7408,7 +7585,11 @@
   J.toString$0$ = function(receiver) {
     return J.getInterceptor(receiver).toString$0(receiver);
   };
-  // Output contains no constant list.
+  Isolate.makeConstantList = function(list) {
+    list.immutable$list = Array;
+    list.fixed$length = Array;
+    return list;
+  };
   var $ = Isolate.$isolateProperties;
   C.CanvasRenderingContext2D_methods = W.CanvasRenderingContext2D.prototype;
   C.Interceptor_methods = J.Interceptor.prototype;
@@ -7544,6 +7725,7 @@
   var s = Object.prototype.toString.call(o);
   return s.substring(8, s.length - 1);
 };
+  C.List_empty = Isolate.makeConstantList([]);
   $.Primitives_mirrorFunctionCacheName = "$cachedFunction";
   $.Primitives_mirrorInvokeCacheName = "$cachedInvocation";
   $.Closure_functionCounter = 0;
@@ -7776,6 +7958,7 @@
       Isolate.prototype = oldIsolate.prototype;
       Isolate.prototype.constructor = Isolate;
       Isolate.$isolateProperties = isolateProperties;
+      Isolate.makeConstantList = oldIsolate.makeConstantList;
       Isolate.functionThatReturnsNull = oldIsolate.functionThatReturnsNull;
       return Isolate;
     };

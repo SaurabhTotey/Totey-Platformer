@@ -59,23 +59,41 @@ class Screen {
         //Gets the game's logical viewport
         var logicalX = this.game.player.center()[0] - this.game.width / 2;
         var logicalY = this.game.player.center()[1] - this.game.height / 2;
+        var maxPossibleLogicalX = this.game.level.width - this.game.width;
+        var maxPossibleLogicalY = this.game.level.height - this.game.height;
         if (logicalX < 0) {
             logicalX = 0;
         }
         if (logicalX + this.game.width > this.game.level.width) {
-            logicalX = this.game.level.width - this.game.width;
+            logicalX = maxPossibleLogicalX;
         }
         if (logicalY < 0) {
             logicalY = 0;
         }
         if (logicalY + this.game.height > this.game.level.height) {
-            logicalY = this.game.level.height - this.game.height;
+            logicalY = maxPossibleLogicalY;
         }
         //Gets a conversion between logical coordinates and screen coordinates
         double stretchX = this.screen.width / this.game.width;
         double stretchY = this.screen.height / this.game.height;
+        //Draws the game's background with parallax
+        if (this.game.level.background.sprite.src.isNotEmpty) {
+            int bgWidth = this.game.level.background.sprite.width;
+            int bgHeight = this.game.level.background.sprite.height;
+            this.renderer.drawImageToRect(
+                this.game.level.background.sprite,
+                new Rectangle(0, 0, this.screen.width, this.screen.height),
+                sourceRect: new Rectangle(
+                    logicalX / maxPossibleLogicalX * (1 - this.game.level.backgroundVisibility) * bgWidth,
+                    logicalY / maxPossibleLogicalY * (1 - this.game.level.backgroundVisibility) * bgHeight,
+                    this.game.level.backgroundVisibility * bgWidth,
+                    this.game.level.backgroundVisibility * bgHeight
+                )
+            );
+        }
         //Draws all of game objects
-        List<Drawable> drawables = new List.from(this.game.level.drawables);
+        List<Drawable> drawables = new List();
+        drawables.addAll(this.game.level.drawables);
         drawables.addAll(this.game.entities);
         drawables.add(this.game.player);
         for (final obj in drawables) {
