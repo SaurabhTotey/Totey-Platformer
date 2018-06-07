@@ -650,16 +650,6 @@
         this.checkGrowable$1(receiver, "add");
         receiver.push(value);
       },
-      remove$1: function(receiver, element) {
-        var i;
-        this.checkGrowable$1(receiver, "remove");
-        for (i = 0; i < receiver.length; ++i)
-          if (J.$eq$(receiver[i], element)) {
-            receiver.splice(i, 1);
-            return true;
-          }
-        return false;
-      },
       _removeWhere$2: function(receiver, test, removeMatching) {
         var retained, end, i, element, t1;
         retained = [];
@@ -720,6 +710,11 @@
         if (receiver.length > 0)
           return receiver[0];
         throw H.wrapException(H.IterableElementError_noElement());
+      },
+      removeRange$2: function(receiver, start, end) {
+        this.checkGrowable$1(receiver, "removeRange");
+        P.RangeError_checkValidRange(start, end, receiver.length, null, null, null);
+        receiver.splice(start, end - start);
       },
       setRange$4: function(receiver, start, end, iterable, skipCount) {
         var $length, i, t1;
@@ -1752,6 +1747,9 @@
           this._handle = null;
         } else
           throw H.wrapException(new P.UnsupportedError("Canceling a timer."));
+      },
+      get$isActive: function() {
+        return this._handle != null;
       },
       TimerImpl$periodic$2: function(milliseconds, callback) {
         if (self.setTimeout != null) {
@@ -6680,7 +6678,7 @@
   }], ["", "../CheckPointGrave.dart",, N, {
     "^": "",
     CheckPointGrave: {
-      "^": "Entity;respawnPoint,x,y,w,h,bg,sprite",
+      "^": "Entity;respawnPoint,isActive,x,y,w,h,bg,sprite",
       act$1: function(game) {
         var t1;
         if (B.intersect(this, game.player)) {
@@ -6702,7 +6700,7 @@
       static: {
         CheckPointGrave$: function(x, y) {
           var t1, t2;
-          t1 = new N.CheckPointGrave(null, x, y, 50, 75, C.Color_0_0_0_0, null);
+          t1 = new N.CheckPointGrave(null, true, x, y, 50, 75, C.Color_0_0_0_0, null);
           t2 = W.ImageElement_ImageElement(null, null, null);
           t1.sprite = t2;
           t2.src = "";
@@ -6728,12 +6726,12 @@
   }], ["", "../Coin.dart",, L, {
     "^": "",
     Coin: {
-      "^": "Entity;x,y,w,h,bg,sprite",
+      "^": "Entity;isActive,x,y,w,h,bg,sprite",
       act$1: function(game) {
         if (!B.intersect(this, game.player))
           return;
         ++game.player.coins;
-        C.JSArray_methods.remove$1(game.entities, this);
+        this.isActive = false;
       }
     }
   }], ["", "../Drawable.dart",, B, {
@@ -6796,7 +6794,7 @@
   }], ["", "../EndBlock.dart",, O, {
     "^": "",
     EndBlock: {
-      "^": "Entity;x,y,w,h,bg,sprite",
+      "^": "Entity;isActive,x,y,w,h,bg,sprite",
       act$1: function(game) {
         if (B.intersect(this, game.player))
           game.isFinished = true;
@@ -6805,12 +6803,12 @@
   }], ["", "../Entity.dart",, O, {
     "^": "",
     Entity: {
-      "^": "Drawable;"
+      "^": "Drawable;isActive<"
     }
   }], ["", "../Game.dart",, G, {
     "^": "",
     Game: {
-      "^": "Object;width>,height>,ticksPerSecond,isFinished,level,player,entities",
+      "^": "Object;width>,height>,ticksPerSecond,isFinished,level,player,entities,spawnQueue",
       update$0: function() {
         var t1, t2, t3;
         this.player.act$1(this);
@@ -6824,6 +6822,12 @@
           t1.loseLife$0();
         if (this.player.lives <= 0)
           this.isFinished = true;
+        t1 = this.spawnQueue;
+        C.JSArray_methods.addAll$1(this.entities, t1);
+        C.JSArray_methods.removeRange$2(t1, 0, t1.length);
+        t1 = this.entities;
+        C.JSArray_methods.checkGrowable$1(t1, "removeWhere");
+        C.JSArray_methods._removeWhere$2(t1, new G.Game_update_closure0(), true);
       }
     },
     Game_update_closure: {
@@ -6831,76 +6835,82 @@
       call$1: function(entity) {
         return entity.act$1(this.$this);
       }
+    },
+    Game_update_closure0: {
+      "^": "Closure:2;",
+      call$1: function(entity) {
+        return !entity.get$isActive();
+      }
     }
   }], ["", "../ItemBlock.dart",, T, {
     "^": "",
     ItemBlock: {
-      "^": "Entity;containedItem,x,y,w,h,bg,sprite",
+      "^": "Entity;containedItem,isActive,x,y,w,h,bg,sprite",
       act$1: function(game) {
-        var t1, t2, movables, t3, _i, entity, t4, t5, t6, t7, t8;
+        var t1, t2, movables, t3, t4, _i, entity, t5, t6, t7, t8, t9;
         t1 = game.entities;
         t2 = H.getTypeArgumentByIndex(t1, 0);
         movables = P.List_List$from(new H.WhereIterable(t1, new T.ItemBlock_act_closure(), [t2]), true, t2);
         C.JSArray_methods.add$1(movables, game.player);
-        for (t1 = movables.length, t2 = this.h, t3 = this.w, _i = 0; _i < movables.length; movables.length === t1 || (0, H.throwConcurrentModificationError)(movables), ++_i) {
+        for (t1 = movables.length, t2 = this.h, t3 = this.w, t4 = game.spawnQueue, _i = 0; _i < movables.length; movables.length === t1 || (0, H.throwConcurrentModificationError)(movables), ++_i) {
           entity = movables[_i];
           if (!B.intersect(this, entity))
             continue;
           if (!(entity.center$0()[0] < this.x)) {
-            t4 = entity.get$velocityX();
+            t5 = entity.get$velocityX();
             if (typeof t3 !== "number")
               return H.iae(t3);
-            t4 = t4 > t3;
+            t5 = t5 > t3;
           } else
-            t4 = true;
-          if (t4) {
+            t5 = true;
+          if (t5) {
             entity.set$velocityX(0);
-            t4 = this.x;
-            t5 = entity.w;
-            if (typeof t5 !== "number")
-              return H.iae(t5);
-            entity.x = t4 - t5;
+            t5 = this.x;
+            t6 = entity.w;
+            if (typeof t6 !== "number")
+              return H.iae(t6);
+            entity.x = t5 - t6;
           }
-          t4 = entity.x;
-          t5 = entity.w;
-          if (typeof t5 !== "number")
-            return t5.$div();
-          t5 /= 2;
-          t6 = entity.y;
-          t7 = entity.h;
-          if (typeof t7 !== "number")
-            return t7.$div();
-          t8 = t7 / 2;
-          t6 = [t4 + t5, t6 + t8][0];
-          t4 = this.x;
+          t5 = entity.x;
+          t6 = entity.w;
+          if (typeof t6 !== "number")
+            return t6.$div();
+          t6 /= 2;
+          t7 = entity.y;
+          t8 = entity.h;
+          if (typeof t8 !== "number")
+            return t8.$div();
+          t9 = t8 / 2;
+          t7 = [t5 + t6, t7 + t9][0];
+          t5 = this.x;
           if (typeof t3 !== "number")
             return H.iae(t3);
-          if (t6 > t4 + t3 || entity.get$velocityX() < -t3) {
+          if (t7 > t5 + t3 || entity.get$velocityX() < -t3) {
             entity.set$velocityX(0);
             entity.x = this.x + t3;
           }
-          if (!([entity.x + t5, entity.y + t8][1] < this.y)) {
-            t4 = entity.get$velocityY();
+          if (!([entity.x + t6, entity.y + t9][1] < this.y)) {
+            t5 = entity.get$velocityY();
             if (typeof t2 !== "number")
               return H.iae(t2);
-            t4 = t4 > t2;
+            t5 = t5 > t2;
           } else
-            t4 = true;
-          if (t4) {
+            t5 = true;
+          if (t5) {
             entity.set$velocityY(0);
-            entity.y = this.y - t7;
+            entity.y = this.y - t8;
             entity.isGrounded = true;
           }
-          t4 = [entity.x + t5, entity.y + t8][1];
-          t5 = this.y;
+          t5 = [entity.x + t6, entity.y + t9][1];
+          t6 = this.y;
           if (typeof t2 !== "number")
             return H.iae(t2);
-          if (t4 > t5 + t2 || entity.get$velocityY() < -t2) {
+          if (t5 > t6 + t2 || entity.get$velocityY() < -t2) {
             entity.set$velocityY(0);
             entity.y = this.y + t2;
-            t4 = this.containedItem;
-            if (t4 != null) {
-              C.JSArray_methods.add$1(game.entities, t4);
+            t5 = this.containedItem;
+            if (t5 != null) {
+              t4.push(t5);
               this.containedItem = null;
               this.sprite = $.$get$ItemBlock_emptyItemSprite();
             }
@@ -6915,7 +6925,7 @@
           $.$get$ItemBlock_emptyItemSprite().src = "res/depletedBox.png";
         }
         if (this.containedItem == null) {
-          t1 = new L.Coin(this.x, this.y - 25, 25, 25, C.Color_0_0_0_0, null);
+          t1 = new L.Coin(true, this.x, this.y - 25, 25, 25, C.Color_0_0_0_0, null);
           t2 = W.ImageElement_ImageElement(null, null, null);
           t1.sprite = t2;
           t2.src = "res/coin.png";
@@ -6926,7 +6936,7 @@
       static: {
         ItemBlock$: function(x, y, containedItem) {
           var t1, t2;
-          t1 = new T.ItemBlock(containedItem, x, y, 50, 50, C.Color_0_0_0_0, null);
+          t1 = new T.ItemBlock(containedItem, true, x, y, 50, 50, C.Color_0_0_0_0, null);
           t2 = W.ImageElement_ImageElement(null, null, null);
           t1.sprite = t2;
           t2.src = "";
@@ -6949,7 +6959,7 @@
   }], ["", "../MovableEntity.dart",, R, {
     "^": "",
     MovableEntity: {
-      "^": "Entity;velocityX@,velocityY@,isGrounded,x,y,w,h,bg,sprite",
+      "^": "Entity;velocityX@,velocityY@,isGrounded,isActive,x,y,w,h,bg,sprite",
       act$1: ["super$MovableEntity$act", function(game) {
         var t1, t2;
         this.x = C.JSInt_methods.round$0(this.x + this.velocityX);
@@ -6962,7 +6972,7 @@
   }], ["", "../Player.dart",, R, {
     "^": "",
     Player: {
-      "^": "MovableEntity;maxLives,lives,lastCheckPoint,coins,standingSprite,jumpingSprite,fallingSprites,rightSprites,leftSprites,velocityX,velocityY,isGrounded,x,y,w,h,bg,sprite",
+      "^": "MovableEntity;maxLives,lives,lastCheckPoint,coins,standingSprite,jumpingSprite,fallingSprites,rightSprites,leftSprites,velocityX,velocityY,isGrounded,isActive,x,y,w,h,bg,sprite",
       act$1: function(game) {
         var t1, t2, t3;
         t1 = this.velocityY;
@@ -7036,7 +7046,7 @@
       static: {
         Player$: function(x, y) {
           var t1, t2;
-          t1 = new R.Player(3, 2, null, 0, W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null), [W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null)], [W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null)], 0, 0, false, x, y, 50, 100, C.Color_0_0_0_0, null);
+          t1 = new R.Player(3, 2, null, 0, W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null), [W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null)], [W.ImageElement_ImageElement(null, null, null), W.ImageElement_ImageElement(null, null, null)], 0, 0, false, true, x, y, 50, 100, C.Color_0_0_0_0, null);
           t2 = W.ImageElement_ImageElement(null, null, null);
           t1.sprite = t2;
           t2.src = "";
@@ -7063,27 +7073,23 @@
       "^": "Object;screen,renderer,aspectRatio,framesPerSecond,game,livesSprite,coinsSprite",
       update$0: function() {
         var t1, t2, logicalX, t3, logicalY, t4, t5, maxPossibleLogicalX, t6, maxPossibleLogicalY, stretchX, stretchY, bgWidth, bgHeight, t7, t8, t9, drawables, _i, obj, t10, t11, guiSize;
-        t1 = this.renderer;
-        t1.fillStyle = "black";
-        t2 = this.screen;
-        t1.fillRect(0, 0, t2.width, t2.height);
-        t2 = this.game;
-        t1 = t2.width;
-        logicalX = t2.player.center$0()[0] - t1 / 2;
-        t3 = t2.height;
-        logicalY = t2.player.center$0()[1] - t3 / 2;
-        t4 = t2.level;
+        t1 = this.game;
+        t2 = t1.width;
+        logicalX = t1.player.center$0()[0] - t2 / 2;
+        t3 = t1.height;
+        logicalY = t1.player.center$0()[1] - t3 / 2;
+        t4 = t1.level;
         t5 = t4.width;
         if (typeof t5 !== "number")
           return t5.$sub();
-        maxPossibleLogicalX = t5 - t1;
+        maxPossibleLogicalX = t5 - t2;
         t6 = t4.height;
         if (typeof t6 !== "number")
           return t6.$sub();
         maxPossibleLogicalY = t6 - t3;
         if (logicalX < 0)
           logicalX = 0;
-        if (logicalX + t1 > t5)
+        if (logicalX + t2 > t5)
           logicalX = maxPossibleLogicalX;
         if (logicalY < 0)
           logicalY = 0;
@@ -7093,11 +7099,15 @@
         t6 = t5.width;
         if (typeof t6 !== "number")
           return t6.$div();
-        stretchX = t6 / t1;
+        stretchX = t6 / t2;
         t5 = t5.height;
         if (typeof t5 !== "number")
           return t5.$div();
         stretchY = t5 / t3;
+        this.renderer.fillStyle = t4.background.bg.toString$0(0);
+        t5 = this.renderer;
+        t6 = this.screen;
+        t5.fillRect(0, 0, t6.width, t6.height);
         if (J.get$src$x(t4.background.sprite).length !== 0) {
           bgWidth = J.get$width$x(t4.background.sprite);
           bgHeight = J.get$height$x(t4.background.sprite);
@@ -7115,9 +7125,9 @@
         }
         drawables = [];
         C.JSArray_methods.addAll$1(drawables, t4.drawables);
-        C.JSArray_methods.addAll$1(drawables, t2.entities);
-        drawables.push(t2.player);
-        for (t4 = drawables.length, t1 = logicalX + t1, t3 = logicalY + t3, t5 = [null], _i = 0; _i < drawables.length; drawables.length === t4 || (0, H.throwConcurrentModificationError)(drawables), ++_i) {
+        C.JSArray_methods.addAll$1(drawables, t1.entities);
+        drawables.push(t1.player);
+        for (t4 = drawables.length, t2 = logicalX + t2, t3 = logicalY + t3, t5 = [null], _i = 0; _i < drawables.length; drawables.length === t4 || (0, H.throwConcurrentModificationError)(drawables), ++_i) {
           obj = drawables[_i];
           t6 = J.get$x$x(obj);
           t7 = obj.get$w();
@@ -7130,7 +7140,7 @@
             t7 = obj.h;
             if (typeof t7 !== "number")
               return H.iae(t7);
-            t6 = t6 + t7 < logicalY || obj.x > t1 || t6 > t3;
+            t6 = t6 + t7 < logicalY || obj.x > t2 || t6 > t3;
           } else
             t6 = true;
           if (t6)
@@ -7162,35 +7172,35 @@
             (t6 && C.CanvasRenderingContext2D_methods).drawImageToRect$2(t6, t7, new P.Rectangle((t8 - logicalX) * stretchX, (t11 - logicalY) * stretchY, t9, t10, t5));
           }
         }
-        t1 = this.screen;
-        t3 = t1.width;
+        t2 = this.screen;
+        t3 = t2.width;
         if (typeof t3 !== "number")
           return H.iae(t3);
         guiSize = 0.05 * t3;
         t3 = this.renderer;
         t3.fillStyle = "red";
-        t1 = t1.width;
-        H.checkNum(t1);
-        t1 = Math.pow(t1, 2);
+        t2 = t2.width;
+        H.checkNum(t2);
+        t2 = Math.pow(t2, 2);
         t4 = this.screen.height;
         H.checkNum(t4);
-        t3.font = H.S(0.05 * Math.sqrt(t1 + Math.pow(t4, 2))) + "px Arial";
+        t3.font = H.S(0.05 * Math.sqrt(t2 + Math.pow(t4, 2))) + "px Arial";
         t4 = this.renderer;
-        t1 = "" + t2.player.lives + "x";
+        t2 = "" + t1.player.lives + "x";
         t3 = this.screen.width;
         if (typeof t3 !== "number")
           return t3.$sub();
-        (t4 && C.CanvasRenderingContext2D_methods).fillText$4(t4, t1, t3 - 2 * guiSize, guiSize, guiSize);
+        (t4 && C.CanvasRenderingContext2D_methods).fillText$4(t4, t2, t3 - 2 * guiSize, guiSize, guiSize);
         t3 = this.renderer;
-        t1 = this.screen.width;
-        if (typeof t1 !== "number")
-          return t1.$sub();
-        (t3 && C.CanvasRenderingContext2D_methods).drawImageToRect$2(t3, this.livesSprite, P.Rectangle$(t1 - guiSize, 0, guiSize, guiSize, null));
-        t1 = this.renderer;
-        t1.fillStyle = "yellow";
-        (t1 && C.CanvasRenderingContext2D_methods).fillText$4(t1, "" + t2.player.coins + "x", 0, guiSize, guiSize);
+        t2 = this.screen.width;
+        if (typeof t2 !== "number")
+          return t2.$sub();
+        (t3 && C.CanvasRenderingContext2D_methods).drawImageToRect$2(t3, this.livesSprite, P.Rectangle$(t2 - guiSize, 0, guiSize, guiSize, null));
         t2 = this.renderer;
-        (t2 && C.CanvasRenderingContext2D_methods).drawImageToRect$2(t2, this.coinsSprite, P.Rectangle$(guiSize, 0, guiSize, guiSize, null));
+        t2.fillStyle = "yellow";
+        (t2 && C.CanvasRenderingContext2D_methods).fillText$4(t2, "" + t1.player.coins + "x", 0, guiSize, guiSize);
+        t1 = this.renderer;
+        (t1 && C.CanvasRenderingContext2D_methods).drawImageToRect$2(t1, this.coinsSprite, P.Rectangle$(guiSize, 0, guiSize, guiSize, null));
       },
       Screen$1: function(game) {
         var t1, e;
@@ -7250,7 +7260,7 @@
   }], ["", "../SolidPlatform.dart",, G, {
     "^": "",
     SolidPlatform: {
-      "^": "Entity;x,y,w,h,bg,sprite",
+      "^": "Entity;isActive,x,y,w,h,bg,sprite",
       act$1: function(game) {
         var t1, t2, movables, t3, _i, entity, t4, t5, t6, t7, t8;
         t1 = game.entities;
@@ -7328,24 +7338,24 @@
     main: [function() {
       var t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, crapTestLevel, game, $screen, pressedKeys;
       t1 = [0, 1000];
-      t2 = new G.SolidPlatform(0, 1100, 800, 50, C.Color_0_0_0_0, null);
+      t2 = new G.SolidPlatform(true, 0, 1100, 800, 50, C.Color_0_0_0_0, null);
       t3 = W.ImageElement_ImageElement(null, null, null);
       t2.sprite = t3;
       t3.src = "res/ground.png";
-      t3 = new G.SolidPlatform(800, 1000, 800, 50, C.Color_0_0_0_0, null);
+      t3 = new G.SolidPlatform(true, 800, 1000, 800, 50, C.Color_0_0_0_0, null);
       t4 = W.ImageElement_ImageElement(null, null, null);
       t3.sprite = t4;
       t4.src = "res/ground.png";
-      t4 = new G.SolidPlatform(1600, 900, 800, 50, C.Color_0_0_0_0, null);
+      t4 = new G.SolidPlatform(true, 1600, 900, 800, 50, C.Color_0_0_0_0, null);
       t5 = W.ImageElement_ImageElement(null, null, null);
       t4.sprite = t5;
       t5.src = "res/ground.png";
       t5 = N.CheckPointGrave$(1975, 825);
-      t6 = new G.SolidPlatform(2400, 800, 400, 50, C.Color_0_0_0_0, null);
+      t6 = new G.SolidPlatform(true, 2400, 800, 400, 50, C.Color_0_0_0_0, null);
       t7 = W.ImageElement_ImageElement(null, null, null);
       t6.sprite = t7;
       t7.src = "res/ground.png";
-      t7 = new O.EndBlock(3100, 600, 50, 50, C.Color_0_0_0_0, null);
+      t7 = new O.EndBlock(true, 3100, 600, 50, 50, C.Color_0_0_0_0, null);
       t8 = W.ImageElement_ImageElement(null, null, null);
       t7.sprite = t8;
       t8.src = "res/rainbowSquare.png";
@@ -7356,7 +7366,7 @@
       t10.sprite = t11;
       t11.src = "res/backgrounds/pineHills.png";
       crapTestLevel = new Q.Level(3200, 1200, t1, [t2, t3, t4, t5, t6, t7, t8, t9], C.List_empty, t10, 0.75, 0.9, 1);
-      game = new G.Game(1600, 900, 30, false, crapTestLevel, null, null);
+      game = new G.Game(1600, 900, 30, false, crapTestLevel, null, null, []);
       game.player = R.Player$(t1[0], t1[1]);
       game.entities = P.List_List$from(crapTestLevel.entities, true, null);
       $screen = D.Screen$(game);
@@ -7393,25 +7403,16 @@
     main_closure1: {
       "^": "Closure:3;game,pressedKeys",
       call$1: function(t) {
-        var t1, t2, t3, _i, t4, t5;
-        for (t1 = this.pressedKeys, t2 = t1.length, t3 = this.game, _i = 0; t4 = t1.length, _i < t4; t4 === t2 || (0, H.throwConcurrentModificationError)(t1), ++_i)
-          switch (t1[_i]) {
-            case 87:
-              t5 = t3.player;
-              if (t5.isGrounded)
-                t5.velocityY = -20;
-              break;
-            case 65:
-              t3.player.velocityX = -15;
-              break;
-            case 83:
-              break;
-            case 68:
-              t3.player.velocityX = 15;
-              break;
-            default:
-              break;
-          }
+        var t1, t2, t3, _i, t4, keyCode;
+        for (t1 = this.pressedKeys, t2 = t1.length, t3 = this.game, _i = 0; t4 = t1.length, _i < t4; t4 === t2 || (0, H.throwConcurrentModificationError)(t1), ++_i) {
+          keyCode = t1[_i];
+          if (keyCode === 87 && t3.player.isGrounded)
+            t3.player.velocityY = -20;
+          if (keyCode === 65)
+            t3.player.velocityX = -15;
+          if (keyCode === 68)
+            t3.player.velocityX = 15;
+        }
       }
     },
     main_closure2: {

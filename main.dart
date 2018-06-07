@@ -33,25 +33,14 @@ void main() {
     //Times key handling to happen periodically
     new Timer.periodic(new Duration(milliseconds: (1000 / 20).round()), (Timer t) {
         for (final keyCode in pressedKeys) {
-            switch (keyCode) {
-                case KeyCode.W: {
-                    if (game.player.isGrounded) {
-                        game.player.velocityY = -20.0;
-                    }
-                    break;
-                }
-                case KeyCode.A: {
-                    game.player.velocityX = -15.0;
-                    break;
-                }
-                case KeyCode.S: {
-                    break;
-                }
-                case KeyCode.D: {
-                    game.player.velocityX = 15.0;
-                    break;
-                }
-                default: break;
+            if (keyCode == KeyCode.W && game.player.isGrounded) {
+                game.player.velocityY = -20.0;
+            }
+            if (keyCode == KeyCode.A) {
+                game.player.velocityX = -15.0;
+            }
+            if (keyCode == KeyCode.D) {
+                game.player.velocityX = 15.0;
             }
         }
     });

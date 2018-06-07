@@ -6,6 +6,9 @@ import 'Game.dart';
  */
 abstract class Entity extends Drawable {
 
+    //Whether the entity is active regards whether it is being used, or whether it should be discarded if inactive
+    bool isActive = true;
+
     /**
      * Makes an entity given its location and possibly how it looks
      */

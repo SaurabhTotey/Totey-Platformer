@@ -53,9 +53,6 @@ class Screen {
      * Updates the screen and redraws it
      */
     void update() {
-        //Clears screen
-        this.renderer.fillStyle = "black";
-        this.renderer.fillRect(0, 0, this.screen.width, this.screen.height);
         //Gets the game's logical viewport
         var logicalX = this.game.player.center()[0] - this.game.width / 2;
         var logicalY = this.game.player.center()[1] - this.game.height / 2;
@@ -76,6 +73,9 @@ class Screen {
         //Gets a conversion between logical coordinates and screen coordinates
         double stretchX = this.screen.width / this.game.width;
         double stretchY = this.screen.height / this.game.height;
+        //Clears screen
+        this.renderer.fillStyle = this.game.level.background.bg.toString();
+        this.renderer.fillRect(0, 0, this.screen.width, this.screen.height);
         //Draws the game's background with parallax
         if (this.game.level.background.sprite.src.isNotEmpty) {
             int bgWidth = this.game.level.background.sprite.width;

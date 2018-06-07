@@ -21,6 +21,8 @@ class Game {
     Player player;
     //The other entities in the game
     List<Entity> entities;
+    //The list of entities that will spawn in in the next update
+    List<Entity> spawnQueue = new List();
 
     /**
      * Constructs a game given a level
@@ -43,6 +45,17 @@ class Game {
         if (this.player.lives <= 0) {
             this.isFinished = true;
         }
+        this.entities.addAll(this.spawnQueue);
+        this.spawnQueue.removeRange(0, this.spawnQueue.length);
+        this.entities.removeWhere((entity) => !entity.isActive);
+    }
+
+    /**
+     * Adds the entity to the spawn queue so that it will spawn in the next update
+     * This is used by other entities to spawn in entities
+     */
+    void spawn(Entity newEntity) {
+        this.spawnQueue.add(newEntity);
     }
 
 }

@@ -21,7 +21,7 @@ class Coin extends Entity {
             return;
         }
         game.player.coins++;
-        game.entities.remove(this);
+        this.isActive = false;
     }
 
 }

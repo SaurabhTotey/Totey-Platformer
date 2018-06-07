@@ -58,7 +58,7 @@ class ItemBlock extends Entity {
                 entity.velocityY = 0.0;
                 entity.y = this.y + this.h;
                 if (this.containedItem != null) {
-                    game.entities.add(this.containedItem);
+                    game.spawn(this.containedItem);
                     this.containedItem = null;
                     this.sprite = emptyItemSprite;
                 }
