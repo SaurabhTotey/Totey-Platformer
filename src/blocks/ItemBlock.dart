@@ -26,7 +26,7 @@ class ItemBlock extends Entity {
             emptyItemSprite.src = "res/depletedBox.png";
         }
         if (this.containedItem == null) {
-            this.containedItem = new Coin(this.x, this.y - 25);
+            this.containedItem = new Coin((this.x + (this.w - 25) / 2).toInt(), this.y - 25);
         }
         this.sprite = mysteryItemSprite;
     }

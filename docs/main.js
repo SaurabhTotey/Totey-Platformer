@@ -815,6 +815,16 @@
     },
     JSNumber: {
       "^": "Interceptor;",
+      toInt$0: function(receiver) {
+        var t1;
+        if (receiver >= -2147483648 && receiver <= 2147483647)
+          return receiver | 0;
+        if (isFinite(receiver)) {
+          t1 = receiver < 0 ? Math.ceil(receiver) : Math.floor(receiver);
+          return t1 + 0;
+        }
+        throw H.wrapException(new P.UnsupportedError("" + receiver + ".toInt()"));
+      },
       round$0: function(receiver) {
         if (receiver > 0) {
           if (receiver !== 1 / 0)
@@ -6842,6 +6852,23 @@
         return !entity.get$isActive();
       }
     }
+  }], ["", "../src/items/Heart.dart",, T, {
+    "^": "",
+    Heart: {
+      "^": "Entity;isActive,x,y,w,h,bg,sprite",
+      act$1: function(game) {
+        var t1;
+        if (B.intersect(this, game.player)) {
+          t1 = game.player;
+          t1 = t1.lives >= t1.maxLives;
+        } else
+          t1 = true;
+        if (t1)
+          return;
+        ++game.player.lives;
+        this.isActive = false;
+      }
+    }
   }], ["", "../src/blocks/ItemBlock.dart",, T, {
     "^": "",
     ItemBlock: {
@@ -6925,11 +6952,15 @@
           $.$get$ItemBlock_emptyItemSprite().src = "res/depletedBox.png";
         }
         if (this.containedItem == null) {
-          t1 = new L.Coin(true, this.x, this.y - 25, 25, 25, C.Color_0_0_0_0, null);
-          t2 = W.ImageElement_ImageElement(null, null, null);
-          t1.sprite = t2;
-          t2.src = "res/coin.png";
-          this.containedItem = t1;
+          t1 = this.x;
+          t2 = this.w;
+          if (typeof t2 !== "number")
+            return t2.$sub();
+          t2 = new L.Coin(true, C.JSNumber_methods.toInt$0(t1 + (t2 - 25) / 2), this.y - 25, 25, 25, C.Color_0_0_0_0, null);
+          t1 = W.ImageElement_ImageElement(null, null, null);
+          t2.sprite = t1;
+          t1.src = "res/coin.png";
+          this.containedItem = t2;
         }
         this.sprite = $.$get$ItemBlock_mysteryItemSprite();
       },
@@ -7336,7 +7367,7 @@
   }], ["", "../src/main.dart",, F, {
     "^": "",
     main: [function() {
-      var t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, crapTestLevel, game, $screen, pressedKeys;
+      var t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, crapTestLevel, game, $screen, pressedKeys;
       t1 = [0, 1000];
       t2 = new G.SolidPlatform(true, 0, 1100, 800, 50, C.Color_0_0_0_0, null);
       t3 = W.ImageElement_ImageElement(null, null, null);
@@ -7361,11 +7392,16 @@
       t8.src = "res/rainbowSquare.png";
       t8 = T.ItemBlock$(375, 900, null);
       t9 = T.ItemBlock$(1175, 800, N.CheckPointGrave$(1175, 725));
-      t10 = new B.Drawable(0, 0, 3200, 1200, C.Color_0_0_0_0, null);
+      t10 = new T.Heart(true, 1987, 675, 25, 25, C.Color_0_0_0_0, null);
       t11 = W.ImageElement_ImageElement(null, null, null);
       t10.sprite = t11;
-      t11.src = "res/backgrounds/pineHills.png";
-      crapTestLevel = new Q.Level(3200, 1200, t1, [t2, t3, t4, t5, t6, t7, t8, t9], C.List_empty, t10, 0.75, 0.9, 1);
+      t11.src = "res/heart.png";
+      t10 = T.ItemBlock$(1975, 700, t10);
+      t11 = new B.Drawable(0, 0, 3200, 1200, C.Color_0_0_0_0, null);
+      t12 = W.ImageElement_ImageElement(null, null, null);
+      t11.sprite = t12;
+      t12.src = "res/backgrounds/pineHills.png";
+      crapTestLevel = new Q.Level(3200, 1200, t1, [t2, t3, t4, t5, t6, t7, t8, t9, t10], C.List_empty, t11, 0.75, 0.9, 1);
       game = new G.Game(1600, 900, 30, false, crapTestLevel, null, null, []);
       game.player = R.Player$(t1[0], t1[1]);
       game.entities = P.List_List$from(crapTestLevel.entities, true, null);
