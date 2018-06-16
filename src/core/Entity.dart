@@ -1,4 +1,4 @@
-import 'Drawable.dart';
+import '../graphics/Drawable.dart';
 import 'Game.dart';
 
 /**

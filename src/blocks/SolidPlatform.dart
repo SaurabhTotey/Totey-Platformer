@@ -1,7 +1,7 @@
-import 'Drawable.dart';
-import 'Entity.dart';
-import 'Game.dart';
-import 'MovableEntity.dart';
+import '../graphics/Drawable.dart';
+import '../core/Entity.dart';
+import '../core/Game.dart';
+import '../core/MovableEntity.dart';
 
 /**
  * A class that represents a platform that is solid and collides on all sides

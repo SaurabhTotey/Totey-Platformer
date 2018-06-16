@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:html' hide Screen;
-import 'CheckPointGrave.dart';
-import 'Drawable.dart';
-import 'EndBlock.dart';
-import 'Game.dart';
-import 'ItemBlock.dart';
-import 'Level.dart';
-import 'Screen.dart';
-import 'SolidPlatform.dart';
+import 'blocks/CheckPointGrave.dart';
+import 'graphics/Drawable.dart';
+import 'blocks/EndBlock.dart';
+import 'core/Game.dart';
+import 'blocks/ItemBlock.dart';
+import 'core/Level.dart';
+import 'graphics/Screen.dart';
+import 'blocks/SolidPlatform.dart';
 
 /**
  * Entry point of the program

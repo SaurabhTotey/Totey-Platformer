@@ -1,6 +1,6 @@
 import 'Entity.dart';
 import 'Level.dart';
-import 'Player.dart';
+import '../characters/Player.dart';
 
 /**
  * The class that handles all of the game logic

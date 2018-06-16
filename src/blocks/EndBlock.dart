@@ -1,6 +1,6 @@
-import 'Drawable.dart';
-import 'Entity.dart';
-import 'Game.dart';
+import '../graphics/Drawable.dart';
+import '../core/Entity.dart';
+import '../core/Game.dart';
 
 /**
  * An entity that when collided with signifies the end of a level

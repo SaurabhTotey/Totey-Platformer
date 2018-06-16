@@ -1,7 +1,7 @@
 import 'dart:html';
 import 'dart:math';
 import 'Drawable.dart';
-import 'Game.dart';
+import '../core/Game.dart';
 
 /**
  * The class that handles the games graphics and drawing to the canvas

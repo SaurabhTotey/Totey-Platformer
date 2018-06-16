@@ -1,9 +1,9 @@
 import 'dart:html';
-import 'Coin.dart';
-import 'Drawable.dart';
-import 'Entity.dart';
-import 'Game.dart';
-import 'MovableEntity.dart';
+import '../items/Coin.dart';
+import '../graphics/Drawable.dart';
+import '../core/Entity.dart';
+import '../core/Game.dart';
+import '../core/MovableEntity.dart';
 
 /**
  * A class that represents a static block that can hold an item

@@ -6675,7 +6675,7 @@
     "^": ""
   }], ["dart.dom.web_sql", "dart:web_sql",, P, {
     "^": ""
-  }], ["", "../CheckPointGrave.dart",, N, {
+  }], ["", "../src/blocks/CheckPointGrave.dart",, N, {
     "^": "",
     CheckPointGrave: {
       "^": "Entity;respawnPoint,isActive,x,y,w,h,bg,sprite",
@@ -6723,7 +6723,7 @@
         return t1;
       }
     }
-  }], ["", "../Coin.dart",, L, {
+  }], ["", "../src/items/Coin.dart",, L, {
     "^": "",
     Coin: {
       "^": "Entity;isActive,x,y,w,h,bg,sprite",
@@ -6734,7 +6734,7 @@
         this.isActive = false;
       }
     }
-  }], ["", "../Drawable.dart",, B, {
+  }], ["", "../src/graphics/Drawable.dart",, B, {
     "^": "",
     intersect: function(first, second) {
       var t1, t2, t3;
@@ -6791,7 +6791,7 @@
         return [t1 + t2 / 2, t3 + t4 / 2];
       }
     }
-  }], ["", "../EndBlock.dart",, O, {
+  }], ["", "../src/blocks/EndBlock.dart",, O, {
     "^": "",
     EndBlock: {
       "^": "Entity;isActive,x,y,w,h,bg,sprite",
@@ -6800,12 +6800,12 @@
           game.isFinished = true;
       }
     }
-  }], ["", "../Entity.dart",, O, {
+  }], ["", "../src/core/Entity.dart",, O, {
     "^": "",
     Entity: {
       "^": "Drawable;isActive<"
     }
-  }], ["", "../Game.dart",, G, {
+  }], ["", "../src/core/Game.dart",, G, {
     "^": "",
     Game: {
       "^": "Object;width>,height>,ticksPerSecond,isFinished,level,player,entities,spawnQueue",
@@ -6842,7 +6842,7 @@
         return !entity.get$isActive();
       }
     }
-  }], ["", "../ItemBlock.dart",, T, {
+  }], ["", "../src/blocks/ItemBlock.dart",, T, {
     "^": "",
     ItemBlock: {
       "^": "Entity;containedItem,isActive,x,y,w,h,bg,sprite",
@@ -6951,12 +6951,12 @@
         return e instanceof R.MovableEntity;
       }
     }
-  }], ["", "../Level.dart",, Q, {
+  }], ["", "../src/core/Level.dart",, Q, {
     "^": "",
     Level: {
       "^": "Object;width>,height>,startingPosition,entities,drawables,background,horizontalVisibility,verticalVisibility,gravity"
     }
-  }], ["", "../MovableEntity.dart",, R, {
+  }], ["", "../src/core/MovableEntity.dart",, R, {
     "^": "",
     MovableEntity: {
       "^": "Entity;velocityX@,velocityY@,isGrounded,isActive,x,y,w,h,bg,sprite",
@@ -6969,7 +6969,7 @@
         this.velocityY = t2 + game.level.gravity;
       }]
     }
-  }], ["", "../Player.dart",, R, {
+  }], ["", "../src/characters/Player.dart",, R, {
     "^": "",
     Player: {
       "^": "MovableEntity;maxLives,lives,lastCheckPoint,coins,standingSprite,jumpingSprite,fallingSprites,rightSprites,leftSprites,velocityX,velocityY,isGrounded,isActive,x,y,w,h,bg,sprite",
@@ -7067,7 +7067,7 @@
         return !J.$eq$(this.$this.sprite, img);
       }
     }
-  }], ["", "../Screen.dart",, D, {
+  }], ["", "../src/graphics/Screen.dart",, D, {
     "^": "",
     Screen: {
       "^": "Object;screen,renderer,aspectRatio,framesPerSecond,game,livesSprite,coinsSprite",
@@ -7257,7 +7257,7 @@
         return this.call$1(null);
       }
     }
-  }], ["", "../SolidPlatform.dart",, G, {
+  }], ["", "../src/blocks/SolidPlatform.dart",, G, {
     "^": "",
     SolidPlatform: {
       "^": "Entity;isActive,x,y,w,h,bg,sprite",
@@ -7333,7 +7333,7 @@
         return e instanceof R.MovableEntity;
       }
     }
-  }], ["", "../main.dart",, F, {
+  }], ["", "../src/main.dart",, F, {
     "^": "",
     main: [function() {
       var t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, crapTestLevel, game, $screen, pressedKeys;

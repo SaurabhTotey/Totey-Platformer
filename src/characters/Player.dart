@@ -1,6 +1,6 @@
 import 'dart:html';
-import 'Game.dart';
-import 'MovableEntity.dart';
+import '../core/Game.dart';
+import '../core/MovableEntity.dart';
 
 /**
  * The class that represents the main player of the game

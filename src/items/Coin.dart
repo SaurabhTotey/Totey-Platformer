@@ -1,6 +1,6 @@
-import 'Drawable.dart';
-import 'Entity.dart';
-import 'Game.dart';
+import '../graphics/Drawable.dart';
+import '../core/Entity.dart';
+import '../core/Game.dart';
 
 /**
  * A class that represents a coin in the game

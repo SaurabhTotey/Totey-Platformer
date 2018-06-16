@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'Drawable.dart';
+import '../graphics/Drawable.dart';
 import 'Entity.dart';
 import 'Game.dart';
 
